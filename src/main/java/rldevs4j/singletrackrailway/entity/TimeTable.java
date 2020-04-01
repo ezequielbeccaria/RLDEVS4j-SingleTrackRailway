@@ -1,0 +1,75 @@
+package rldevs4j.singletrackrailway.entity;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.List;
+import rldevs4j.utils.FastByteArrayOutputStream;
+
+/**
+ *
+ * @author Ezequiel Beccaria
+ */
+public class TimeTable implements Serializable{
+    private List<TimeTableEntry> details;
+    private Integer currentEntry;
+
+    public TimeTable(List<TimeTableEntry> details, Integer currentEntry) {
+        this.details = details;
+        this.currentEntry = 0;
+    }
+    
+    public void nextEntry(){
+        currentEntry++;
+    }
+    
+    public Double getInitPosition(){
+        TimeTableEntry tte = details.get(currentEntry);
+        return tte.getPosition();
+    }
+    
+    public Double getNextDepartureTime(){
+        for(int i=currentEntry;i<details.size();i++){
+            TimeTableEntry tte = details.get(i);
+            if(EntryType.DEPARTURE.equals(tte.getType()))
+                return tte.getTime();
+        }
+        return null;
+    }
+    
+    public Double getNextArribalPos(){
+        for(int i=currentEntry;i<details.size();i++){
+            TimeTableEntry tte = details.get(i);
+            if(EntryType.ARRIBAL.equals(tte.getType()))
+                return tte.getPosition();
+        }
+        return null;
+    }
+    
+    public TimeTable deepCopy(){
+        Object obj = null;
+        try {
+            // Write the object out to a byte array
+            FastByteArrayOutputStream fbos = new FastByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(fbos);
+            out.writeObject(this);
+            out.flush();
+            out.close();
+
+            // Retrieve an input stream from the byte array and read
+            // a copy of the object back in. 
+            ObjectInputStream in = 
+                new ObjectInputStream(fbos.getInputStream());
+            obj = in.readObject();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        }
+        return (TimeTable) obj;
+    }
+    
+}
