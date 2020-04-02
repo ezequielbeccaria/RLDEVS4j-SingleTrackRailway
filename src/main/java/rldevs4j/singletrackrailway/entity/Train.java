@@ -109,11 +109,11 @@ public class Train extends ExogenousEventGenerator {
     
     @Override
     public message out() {
-        System.out.println(String.format("Time: %f - Train: %d - Position: %f", currentGlobalTime(), id, position)); //DEBUG
+//        System.out.println(String.format("Time: %f - Train: %d - Position: %f", currentGlobalTime(), id, position)); //DEBUG
         message m = new message();      
         content con = makeContent(
             "out", 
-            new Event(id, "state", EventType.exogenous, position));
+            new TrainEvent(id, position, currentSpeed));
         m.add(con);
         return m;
     }
@@ -130,6 +130,10 @@ public class Train extends ExogenousEventGenerator {
 
     public Double getPosition() {
         return position;
+    }
+
+    public Double getCurrentSpeed() {
+        return currentSpeed;
     }
 
     public Integer getId() {

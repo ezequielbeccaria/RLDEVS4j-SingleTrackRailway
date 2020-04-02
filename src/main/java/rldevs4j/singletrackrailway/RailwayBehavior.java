@@ -1,7 +1,6 @@
 package rldevs4j.singletrackrailway;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
 import rldevs4j.singletrackrailway.entity.Train;
+import rldevs4j.singletrackrailway.entity.TrainEvent;
 
 /**
  *
@@ -21,35 +21,49 @@ import rldevs4j.singletrackrailway.entity.Train;
 public class RailwayBehavior implements Behavior {
     private final BlockSectionTreeMap sections;
     private final List<Train> trains;
-    private Double[] trainsXSection; //Number of trains in each section
-    private Map<Integer, BlockSection> trainsInSection; //Section where is each train
-    private List<Event> actions;
+    private final List<Double> trainsXSection; //Number of trains in each section
+    private final Map<Integer, BlockSection> trainsInSection; //Section where is each train
+    private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
+    private final List<Event> actions;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains) {
         this.sections = sections;
         this.trains = trains;
-        this.trainsXSection = new Double[sections.size()];
-        Arrays.fill(trainsXSection, 0D);
+        this.trainsXSection = new ArrayList<>(sections.size());
+        for(int i=0;i<sections.size();i++)
+            this.trainsXSection.add(0D);
         this.trainsInSection = new HashMap<>();        
         this.actions = new ArrayList<>();
+        this.lastTrainEvents = new HashMap<>();
     }
 
     @Override
     public void trasition(INDArray state, Event e) {
+        TrainEvent tEvent = (TrainEvent) e;
         //Get trains current blocksection based on train position
-        BlockSection bs = sections.get(e.getValue()); 
-        Train train = trains.get(e.getId());
-        if(trainsInSection.containsKey(train.getId())){
-            BlockSection prevBs = trainsInSection.get(train.getId());
-            trainsXSection[prevBs.getId()] -= 1D;             
+        BlockSection bs = sections.get(tEvent.getPosition()); 
+        if(trainsInSection.containsKey(tEvent.getId())){
+            BlockSection prevBs = trainsInSection.get(tEvent.getId());
+            trainsXSection.set(prevBs.getId(), trainsXSection.get(prevBs.getId()) - 1D);                         
         }        
-        trainsInSection.put(train.getId(), bs);           
-        trainsXSection[bs.getId()] += 1D;
+        trainsInSection.put(tEvent.getId(), bs);           
+        trainsXSection.set(bs.getId(), trainsXSection.get(bs.getId()) + 1D);
+        lastTrainEvents.put(e.getId(), tEvent);        
     }
 
     @Override
     public INDArray observation() {
-        return Nd4j.zeros(1);
+        List<Double> obs = new ArrayList<>();
+        for(Integer k : lastTrainEvents.keySet()){
+            TrainEvent te = lastTrainEvents.get(k);
+            obs.add(te.getPosition());
+            obs.add(te.getSpeed());
+        }
+        obs.addAll(trainsXSection);    
+
+        System.out.println(obs); //DEBUG
+
+        return Nd4j.create(obs);
     }
 
     @Override
