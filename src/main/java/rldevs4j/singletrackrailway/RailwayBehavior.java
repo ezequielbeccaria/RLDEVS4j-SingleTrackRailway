@@ -39,16 +39,18 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public void trasition(INDArray state, Event e) {
-        TrainEvent tEvent = (TrainEvent) e;
-        //Get trains current blocksection based on train position
-        BlockSection bs = sections.get(tEvent.getPosition()); 
-        if(trainsInSection.containsKey(tEvent.getId())){
-            BlockSection prevBs = trainsInSection.get(tEvent.getId());
-            trainsXSection.set(prevBs.getId(), trainsXSection.get(prevBs.getId()) - 1D);                         
+        if(e instanceof TrainEvent){
+            TrainEvent tEvent = (TrainEvent) e;
+            //Get trains current blocksection based on train position
+            BlockSection bs = sections.get(tEvent.getPosition()); 
+            if(trainsInSection.containsKey(tEvent.getId())){
+                BlockSection prevBs = trainsInSection.get(tEvent.getId());
+                trainsXSection.set(prevBs.getId(), trainsXSection.get(prevBs.getId()) - 1D);                         
+            }        
+            trainsInSection.put(tEvent.getId(), bs);           
+            trainsXSection.set(bs.getId(), trainsXSection.get(bs.getId()) + 1D);
+            lastTrainEvents.put(e.getId(), tEvent);        
         }        
-        trainsInSection.put(tEvent.getId(), bs);           
-        trainsXSection.set(bs.getId(), trainsXSection.get(bs.getId()) + 1D);
-        lastTrainEvents.put(e.getId(), tEvent);        
     }
 
     @Override
@@ -60,6 +62,11 @@ public class RailwayBehavior implements Behavior {
             obs.add(te.getSpeed());
         }
         obs.addAll(trainsXSection);    
+        
+        List<BlockSection> bsList = (List<BlockSection>) sections.values();
+        for(int i=0;i<bsList.size();i++){
+            obs.add(bsList.get(i).isAvailable(trainsXSection.get(i)));
+        }        
 
         System.out.println(obs); //DEBUG
 
@@ -83,8 +90,13 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public ExogenousEventActivation activeEvents() {
+        //TODO: Disable trains with next block section unavailable
         Map<String,Map<String,Double>> content = new HashMap<>();
-        Map<String,Double> c = new HashMap<>();
+        for(TrainEvent te : lastTrainEvents.values()){
+            Map<String,Double> c = new HashMap<>();   
+            c.put("stop", blockTrain(te.getId())?1D:0D);                
+            content.put(te.getName(), c);
+        }        
         ExogenousEventActivation eea = new ExogenousEventActivation(content);
         return eea;
     }
@@ -93,5 +105,26 @@ public class RailwayBehavior implements Behavior {
     public List<Event> getAllActios() {
         return actions;
     }    
+    
+    private boolean blockTrain(Integer id){
+        BlockSection bs = trainsInSection.get(id);
+        TrainEvent lastEv = lastTrainEvents.get(id);
+      
+        if("passive".equals(lastEv.getPhase()))
+            return false;
+        
+        //get next section 
+        BlockSection nextBs;
+        if (lastEv.getSpeed() < 0D){
+            nextBs = sections.getById(bs.getId()-1);
+        }else{
+            nextBs = sections.getById(bs.getId()+1);
+        }
+        
+        if(nextBs==null)
+            return false;
+        
+        return !(nextBs.isAvailable(trainsXSection.get(nextBs.getId())) == 0D);
+    }
     
 }

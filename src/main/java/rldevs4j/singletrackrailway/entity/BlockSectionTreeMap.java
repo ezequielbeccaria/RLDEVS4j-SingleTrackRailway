@@ -1,5 +1,8 @@
 package rldevs4j.singletrackrailway.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -37,6 +40,21 @@ public class BlockSectionTreeMap extends TreeMap<Double, BlockSection>{
     public int size() {
         return addCounter;
     }
+
+    @Override
+    public Collection<BlockSection> values() {
+        List<BlockSection> list = new ArrayList<>();
+        for(BlockSection bs : super.values()){
+            if(bs != null)
+                list.add(bs);
+        }
+        return list; 
+    }
     
-    
+    public BlockSection getById(Integer id) {
+        for(BlockSection bs : super.values())
+            if(bs != null && Objects.equals(bs.getId(), id))
+                return bs;
+        return null;
+    } 
 }

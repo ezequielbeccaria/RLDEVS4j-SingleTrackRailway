@@ -39,7 +39,7 @@ public class BlockSection implements Serializable{
         return false;
     }
     
-    public boolean inBlock(Double position){
-        return initDist <= position && position <= endDist;
+    public Double isAvailable(Double trainsIn){
+        return trainsIn<capacity?0D:1D;
     }
 }

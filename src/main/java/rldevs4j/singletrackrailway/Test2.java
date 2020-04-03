@@ -48,14 +48,14 @@ public class Test2 {
         sections.put(bs23);
         sections.put(s3);
         
-        TimeTableEntry tte1 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1);
-        TimeTableEntry tte2 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2);
-        TimeTableEntry tte3 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte4 = new TimeTableEntry(26D, EntryType.ARRIBAL, s3);
-        TimeTableEntry tte5 = new TimeTableEntry(32D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte6 = new TimeTableEntry(37D, EntryType.ARRIBAL, s2);
-        TimeTableEntry tte7 = new TimeTableEntry(40D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte8 = new TimeTableEntry(43D, EntryType.ARRIBAL, s1);
+        TimeTableEntry tte1 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1, false);
+        TimeTableEntry tte2 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2, false);
+        TimeTableEntry tte3 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2, false);
+        TimeTableEntry tte4 = new TimeTableEntry(26D, EntryType.ARRIBAL, s3, false);
+        TimeTableEntry tte5 = new TimeTableEntry(32D, EntryType.DEPARTURE, s3, false);
+        TimeTableEntry tte6 = new TimeTableEntry(37D, EntryType.ARRIBAL, s2, false);
+        TimeTableEntry tte7 = new TimeTableEntry(40D, EntryType.DEPARTURE, s2, false);
+        TimeTableEntry tte8 = new TimeTableEntry(43D, EntryType.ARRIBAL, s1, true);
         
         List<TimeTableEntry> timeTableEntries = new ArrayList<>();
         timeTableEntries.add(tte1);
@@ -68,7 +68,7 @@ public class Test2 {
         timeTableEntries.add(tte8);        
         
         TimeTable timeTable = new TimeTable(timeTableEntries, 0);
-        Train train1 = new Train(0, "train1", 80D, timeTable);
+        Train train1 = new Train(0, "train0", 80D, timeTable);
         
         List<Train> trains = new ArrayList<>();
         trains.add(train1);

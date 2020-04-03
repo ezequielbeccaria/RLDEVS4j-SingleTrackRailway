@@ -7,9 +7,10 @@ import java.io.Serializable;
  * @author Ezequiel Beccaria
  */
 public class TimeTableEntry implements Serializable{
-    private Double time;
-    private EntryType type;
-    private Station station;
+    private final Double time;
+    private final EntryType type;
+    private final Station station;
+    private final boolean last;
 
     /**
      *
@@ -17,10 +18,11 @@ public class TimeTableEntry implements Serializable{
      * @param type
      * @param station
      */
-    public TimeTableEntry(Double time, EntryType type, Station station) {
+    public TimeTableEntry(Double time, EntryType type, Station station, boolean last) {
         this.time = time;
         this.type = type;
         this.station = station;
+        this.last = last;
     }
 
     public Double getTime() {
@@ -33,5 +35,9 @@ public class TimeTableEntry implements Serializable{
     
     public Double getPosition(){
         return station.getInitDist();
+    }
+
+    public boolean isLast() {
+        return last;
     }
 }

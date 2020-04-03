@@ -2,12 +2,12 @@ package rldevs4j.singletrackrailway.entity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
+import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
-import rldevs4j.base.env.msg.Event;
-import rldevs4j.base.env.msg.EventType;
 
 /**
  * TODO: Probar funcionamiento
@@ -20,7 +20,9 @@ public class Train extends ExogenousEventGenerator {
     private Double position;
     private final TimeTable initTimeTable;
     private TimeTable timeTable;
-    private Double currentPosObj;   
+    private Double currentObjPos;   
+    private String prevPhase;
+    private Double prevSigma;
     
     /**
      * 
@@ -67,19 +69,19 @@ public class Train extends ExogenousEventGenerator {
         nextPos = new BigDecimal(nextPos).setScale(0, RoundingMode.FLOOR).doubleValue();
         
         
-        if(currentSpeed>0 && nextPos<currentPosObj){
+        if(currentSpeed>0 && nextPos<currentObjPos){
             return nextPos;
-        }else if(currentSpeed<0 && nextPos>currentPosObj){
+        }else if(currentSpeed<0 && nextPos>currentObjPos){
             return nextPos;
         }
-        return currentPosObj;            
+        return currentObjPos;            
     }
     
     private boolean arribal(Double pos){        
         
-        if(currentSpeed>0 && pos<currentPosObj){
+        if(currentSpeed>0 && pos<currentObjPos){
             return false;
-        }else if(currentSpeed<0 && pos>currentPosObj){
+        }else if(currentSpeed<0 && pos>currentObjPos){
             return false;
         }
         return true;            
@@ -88,38 +90,58 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public void deltint() {
         if(this.phaseIs("initial")){
+            currentObjPos = timeTable.getNextArribalPos();
             holdIn("passive", getNextDepartureTime());
         } else if(this.phaseIs("passive")){
-            holdIn("active", 1D);            
-            currentPosObj = timeTable.getNextArribalPos();
-            currentSpeed = currentPosObj > position ? maxSpeed : -maxSpeed;
+            holdIn("active", 1D);                        
+            currentSpeed = currentObjPos > position ? maxSpeed : -maxSpeed;
             position = nextPosition(sigma);
             timeTable.nextEntry();
         } else if (this.phaseIs("active")){            
             if(arribal(position)){
-                holdIn("arribal", 0D);
+                currentSpeed = 0D;                
+                if(timeTable.lastOneEntry()){
+                    holdIn("final", 0D); 
+                }else{
+                    timeTable.nextEntry();
+                    currentObjPos = timeTable.getNextArribalPos();
+                    holdIn("passive", getNextDepartureTime());  
+                }                
             }else{
                 position = nextPosition(sigma);
             }
-        } else if(this.phaseIs("arribal")){
-            timeTable.nextEntry();
-            holdIn("passive", getNextDepartureTime());   
+        } else if(this.phaseIs("final")){
+            passivate();
         }
     }
     
     @Override
     public message out() {
-//        System.out.println(String.format("Time: %f - Train: %d - Position: %f", currentGlobalTime(), id, position)); //DEBUG
-        message m = new message();      
-        content con = makeContent(
-            "out", 
-            new TrainEvent(id, position, currentSpeed));
-        m.add(con);
+        message m = new message();    
+        if(!phaseIs("initial")){
+            content con = makeContent(
+                "out", 
+                new TrainEvent(id, phase, position, currentSpeed, currentObjPos));
+            m.add(con);
+        }
         return m;
     }
     
     @Override
     public void deltext(double e, message x) {
+        for (int i = 0; i < x.getLength(); i++) {
+            if (messageOnPort(x, "in", i)) {       
+                Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
+                if(content.get("stop").equals(1D)){                    
+                    prevPhase = getPhase();
+                    prevSigma = sigma;
+                    holdIn("stop", INFINITY);                    
+                } else if(content.get("stop").equals(0D)){
+                    if(phaseIs("stop"))
+                        holdIn(prevPhase, prevSigma);                          
+                }    
+            }     
+        }      
         Continue(e);
     }
 

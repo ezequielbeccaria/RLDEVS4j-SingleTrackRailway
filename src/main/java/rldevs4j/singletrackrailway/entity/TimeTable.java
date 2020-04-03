@@ -72,4 +72,7 @@ public class TimeTable implements Serializable{
         return (TimeTable) obj;
     }
     
+    public boolean lastOneEntry(){
+        return details.get(currentEntry).isLast();  
+    }
 }
