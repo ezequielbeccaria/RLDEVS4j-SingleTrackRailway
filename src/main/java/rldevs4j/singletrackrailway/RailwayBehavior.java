@@ -20,7 +20,6 @@ import rldevs4j.singletrackrailway.entity.TrainEvent;
  */
 public class RailwayBehavior implements Behavior {
     private final BlockSectionTreeMap sections;
-    private final List<Train> trains;
     private final List<Double> trainsXSection; //Number of trains in each section
     private final Map<Integer, BlockSection> trainsInSection; //Section where is each train
     private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
@@ -28,7 +27,6 @@ public class RailwayBehavior implements Behavior {
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains) {
         this.sections = sections;
-        this.trains = trains;
         this.trainsXSection = new ArrayList<>(sections.size());
         for(int i=0;i<sections.size();i++)
             this.trainsXSection.add(0D);
@@ -90,7 +88,6 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public ExogenousEventActivation activeEvents() {
-        //TODO: Disable trains with next block section unavailable
         Map<String,Map<String,Double>> content = new HashMap<>();
         for(TrainEvent te : lastTrainEvents.values()){
             Map<String,Double> c = new HashMap<>();   
