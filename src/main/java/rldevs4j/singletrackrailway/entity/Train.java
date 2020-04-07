@@ -3,6 +3,7 @@ package rldevs4j.singletrackrailway.entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.Objects;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
@@ -22,7 +23,7 @@ public class Train extends ExogenousEventGenerator {
     private TimeTable timeTable;
     private Double currentObjPos;   
     private String prevPhase;
-    private Double prevSigma;
+    private final Double advTimeUnit = 0.1D;
     
     /**
      * 
@@ -52,7 +53,7 @@ public class Train extends ExogenousEventGenerator {
         
         Double tL = currentGlobalTime();
         Double diff =  nDepTime - tL;
-        return diff > 1D ? diff : 1D;
+        return diff > advTimeUnit ? diff : advTimeUnit;
     }
     
     private Double currentGlobalTime(){
@@ -89,57 +90,83 @@ public class Train extends ExogenousEventGenerator {
     
     @Override
     public void deltint() {
-        if(this.phaseIs("initial")){
-            currentObjPos = timeTable.getNextArribalPos();
-            holdIn("passive", getNextDepartureTime());
-        } else if(this.phaseIs("passive")){
-            holdIn("active", 1D);                        
-            currentSpeed = currentObjPos > position ? maxSpeed : -maxSpeed;
-            position = nextPosition(sigma);
-            timeTable.nextEntry();
-        } else if (this.phaseIs("active")){            
-            if(arribal(position)){
-                currentSpeed = 0D;                
-                if(timeTable.lastOneEntry()){
-                    holdIn("final", 0D); 
-                }else{
-                    timeTable.nextEntry();
-                    currentObjPos = timeTable.getNextArribalPos();
-                    holdIn("passive", getNextDepartureTime());  
-                }                
-            }else{
+        if(!phaseIs("stop")){
+            if(this.phaseIs("initial")){
+                currentObjPos = timeTable.getNextArribalPos();
+                holdIn("passive", getNextDepartureTime());
+            } else if(this.phaseIs("passive")){
+                holdIn("active", advTimeUnit);                        
+                currentSpeed = currentObjPos > position ? maxSpeed : -maxSpeed;
                 position = nextPosition(sigma);
+                timeTable.nextEntry();
+            } else if (this.phaseIs("active")){            
+                if(arribal(position)){
+                    currentSpeed = 0D;                
+                    if(timeTable.lastOneEntry()){
+                        holdIn("final", 0D); 
+                    }else{
+                        timeTable.nextEntry();
+                        currentObjPos = timeTable.getNextArribalPos();
+                        holdIn("passive", getNextDepartureTime());  
+                    }                
+                }else{
+                    position = nextPosition(advTimeUnit);
+                    holdIn("active", advTimeUnit);                 
+                }
+            } else if(this.phaseIs("final")){
+                passivate();
             }
-        } else if(this.phaseIs("final")){
-            passivate();
-        }
+        }else{
+            holdIn("stop", INFINITY);     
+        }        
     }
     
     @Override
     public message out() {
         message m = new message();    
         if(!phaseIs("initial")){
-            content con = makeContent(
+            if(!phaseIs("stop")){
+                content con = makeContent(
                 "out", 
-                new TrainEvent(id, phase, position, currentSpeed, currentObjPos));
-            m.add(con);
+                new TrainEvent(
+                        id, 
+                        phase, 
+                        position, 
+                        Objects.equals(position, currentObjPos)?0D:currentSpeed, 
+                        currentObjPos, 
+                        nextPosition(advTimeUnit)));
+                m.add(con);
+            }else{
+                content con = makeContent(
+                "out", 
+                new TrainEvent(
+                        id, 
+                        phase, 
+                        position, 
+                        0D, 
+                        currentObjPos, 
+                        nextPosition(advTimeUnit)));
+                m.add(con);
+            }            
         }
         return m;
-    }
-    
+    }    
+
     @Override
     public void deltext(double e, message x) {
         for (int i = 0; i < x.getLength(); i++) {
             if (messageOnPort(x, "in", i)) {       
                 Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
-                if(content.get("stop").equals(1D)){                    
-                    prevPhase = getPhase();
-                    prevSigma = sigma;
-                    holdIn("stop", INFINITY);                    
-                } else if(content.get("stop").equals(0D)){
-                    if(phaseIs("stop"))
-                        holdIn(prevPhase, prevSigma);                          
-                }    
+                if(content != null)
+                    if(content.get("stop").equals(1D)){     
+                        if(!phaseIs("stop")){
+                            prevPhase = getPhase();                        
+                            holdIn("stop", 0D);                    
+                        }
+                    } else if(content.get("stop").equals(0D)){
+                        if(phaseIs("stop"))
+                            holdIn(prevPhase, advTimeUnit);                          
+                    }    
             }     
         }      
         Continue(e);
@@ -147,7 +174,7 @@ public class Train extends ExogenousEventGenerator {
 
     @Override
     public double nextSigma() {
-        return 1D;
+        return advTimeUnit;
     }
 
     public Double getPosition() {

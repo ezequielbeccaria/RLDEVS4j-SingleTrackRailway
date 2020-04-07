@@ -33,10 +33,10 @@ public class Test1 {
         bstm.put(bs);
         bstm.put(s2);        
         
-        TimeTableEntry tte1 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1, false);
-        TimeTableEntry tte2 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2, false);
-        TimeTableEntry tte3 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2, false);
-        TimeTableEntry tte4 = new TimeTableEntry(26D, EntryType.ARRIBAL, s1, true);
+        TimeTableEntry tte1 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1);
+        TimeTableEntry tte2 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2);
+        TimeTableEntry tte3 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte4 = new TimeTableEntry(26D, EntryType.ARRIBAL, s1);
         List<TimeTableEntry> timeTableEntries = new ArrayList<>();
         timeTableEntries.add(tte1);
         timeTableEntries.add(tte2);

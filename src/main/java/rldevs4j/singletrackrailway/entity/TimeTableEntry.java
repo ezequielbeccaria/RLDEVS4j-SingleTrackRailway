@@ -10,7 +10,6 @@ public class TimeTableEntry implements Serializable{
     private final Double time;
     private final EntryType type;
     private final Station station;
-    private final boolean last;
 
     /**
      *
@@ -18,11 +17,10 @@ public class TimeTableEntry implements Serializable{
      * @param type
      * @param station
      */
-    public TimeTableEntry(Double time, EntryType type, Station station, boolean last) {
+    public TimeTableEntry(Double time, EntryType type, Station station) {
         this.time = time;
         this.type = type;
         this.station = station;
-        this.last = last;
     }
 
     public Double getTime() {
@@ -35,9 +33,5 @@ public class TimeTableEntry implements Serializable{
     
     public Double getPosition(){
         return station.getInitDist();
-    }
-
-    public boolean isLast() {
-        return last;
     }
 }
