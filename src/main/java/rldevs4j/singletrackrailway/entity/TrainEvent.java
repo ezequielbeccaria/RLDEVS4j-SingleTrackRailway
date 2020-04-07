@@ -8,16 +8,18 @@ import rldevs4j.base.env.msg.EventType;
  * @author Ezequiel Beccaria
  */
 public class TrainEvent extends Event{
+    private final String phase;
     private final Double position;
     private final Double speed;
-    private final String phase;
+    private final Double objPos;    
     private final Double estNextPos;
     
     public TrainEvent(int id, String phase, double position, double speed, double objPos, double estNextPos) {
-        super(id, "train"+id, EventType.exogenous, objPos);
+        super(id, "train"+id, EventType.exogenous);
         this.position = position;
         this.speed = speed;
         this.phase = phase;
+        this.objPos = objPos;
         this.estNextPos = estNextPos;
     }
 
@@ -30,7 +32,7 @@ public class TrainEvent extends Event{
     }
     
     public Double getObjPos(){
-        return getValue();
+        return objPos;
     }
     
     public String getPhase(){

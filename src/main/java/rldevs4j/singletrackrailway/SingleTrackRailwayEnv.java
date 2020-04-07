@@ -6,6 +6,7 @@ import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.StateSpaceInfo;
 import rldevs4j.base.env.gsmdp.StateObserver;
 import rldevs4j.base.env.msg.Event;
+import rldevs4j.base.env.msg.Step;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
 import rldevs4j.singletrackrailway.entity.Train;
 
@@ -48,6 +49,11 @@ public class SingleTrackRailwayEnv extends Environment{
     @Override
     public StateSpaceInfo getStateSpaceInfo() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Step> getTrace() {
+        return this.so.getTrace();
     }
     
 }

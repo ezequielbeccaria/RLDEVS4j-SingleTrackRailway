@@ -68,8 +68,7 @@ public class Train extends ExogenousEventGenerator {
     private Double nextPosition(Double e){
         Double nextPos = position + currentSpeed*e;
         nextPos = new BigDecimal(nextPos).setScale(0, RoundingMode.FLOOR).doubleValue();
-        
-        
+               
         if(currentSpeed>0 && nextPos<currentObjPos){
             return nextPos;
         }else if(currentSpeed<0 && nextPos>currentObjPos){
@@ -78,8 +77,7 @@ public class Train extends ExogenousEventGenerator {
         return currentObjPos;            
     }
     
-    private boolean arribal(Double pos){        
-        
+    private boolean arribal(Double pos){       
         if(currentSpeed>0 && pos<currentObjPos){
             return false;
         }else if(currentSpeed<0 && pos>currentObjPos){
