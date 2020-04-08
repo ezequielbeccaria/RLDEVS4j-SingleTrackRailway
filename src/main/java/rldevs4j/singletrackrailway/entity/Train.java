@@ -9,13 +9,15 @@ import model.modeling.content;
 import model.modeling.message;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
+import rldevs4j.utils.DoubleUtils;
 
 /**
- * TODO: Probar funcionamiento
+ * 
  * @author Ezequiel Beccaria
  */
 public class Train extends ExogenousEventGenerator {
     private final Integer id;
+    private boolean stop;
     private final Double maxSpeed;   
     private Double currentSpeed;
     private Double position;
@@ -35,6 +37,7 @@ public class Train extends ExogenousEventGenerator {
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable) {
         super(name, null, "passive", DevsInterface.INFINITY);
         this.id = id;
+        this.stop = false;
         this.maxSpeed = maxSpeed*16.667D; //To meters/s
         this.currentSpeed = 0D;
         this.initTimeTable = timeTable;
@@ -52,7 +55,7 @@ public class Train extends ExogenousEventGenerator {
         if (nDepTime == null) return INFINITY;
         
         Double tL = currentGlobalTime();
-        Double diff =  nDepTime - tL;
+        double diff =  DoubleUtils.round(nDepTime - tL, 2);    
         return diff > advTimeUnit ? diff : advTimeUnit;
     }
     
@@ -88,42 +91,38 @@ public class Train extends ExogenousEventGenerator {
     
     @Override
     public void deltint() {
-        if(!phaseIs("stop")){
-            if(this.phaseIs("initial")){
-                currentObjPos = timeTable.getNextArribalPos();
-                holdIn("passive", getNextDepartureTime());
-            } else if(this.phaseIs("passive")){
-                holdIn("active", advTimeUnit);                        
-                currentSpeed = currentObjPos > position ? maxSpeed : -maxSpeed;
-                position = nextPosition(sigma);
-                timeTable.nextEntry();
-            } else if (this.phaseIs("active")){            
-                if(arribal(position)){
-                    currentSpeed = 0D;                
-                    if(timeTable.lastOneEntry()){
-                        holdIn("final", 0D); 
-                    }else{
-                        timeTable.nextEntry();
-                        currentObjPos = timeTable.getNextArribalPos();
-                        holdIn("passive", getNextDepartureTime());  
-                    }                
+        if(this.phaseIs("initial")){
+            currentObjPos = timeTable.getNextArribalPos();
+            holdIn("passive", getNextDepartureTime());
+        } else if(this.phaseIs("passive")){
+            holdIn("active", advTimeUnit);                        
+            currentSpeed = currentObjPos > position ? maxSpeed : -maxSpeed;
+            position = stop?position:nextPosition(sigma);
+            timeTable.nextEntry();
+        } else if (this.phaseIs("active")){            
+            if(arribal(position)){
+                currentSpeed = 0D;                
+                if(timeTable.lastOneEntry()){
+                    holdIn("final", 0D); 
                 }else{
-                    position = nextPosition(advTimeUnit);
-                    holdIn("active", advTimeUnit);                 
-                }
-            } else if(this.phaseIs("final")){
-                passivate();
+                    timeTable.nextEntry();
+                    currentObjPos = timeTable.getNextArribalPos();                                        
+                    holdIn("passive", getNextDepartureTime());  
+                }                
+            }else{
+                position = stop?position:nextPosition(advTimeUnit);
+                holdIn("active", advTimeUnit);                 
             }
-        }else{
-            holdIn("stop", INFINITY);     
-        }        
+        } else if(this.phaseIs("final")){
+            passivate();
+        }
     }
     
     @Override
     public message out() {
         message m = new message();    
         if(!phaseIs("initial")){
-            if(!phaseIs("stop")){
+            if(!stop){
                 content con = makeContent(
                 "out", 
                 new TrainEvent(
@@ -157,13 +156,17 @@ public class Train extends ExogenousEventGenerator {
                 Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
                 if(content != null)
                     if(content.get("stop").equals(1D)){     
-                        if(!phaseIs("stop")){
-                            prevPhase = getPhase();                        
-                            holdIn("stop", 0D);                    
-                        }
+                        stop = true;
+//                        holdIn(phase, sigma-e);                        
+//                        if(!phaseIs("stop") && !phaseIs("passive")){
+//                            prevPhase = getPhase();                        
+//                            holdIn("stop", 0D);                    
+//                        }
                     } else if(content.get("stop").equals(0D)){
-                        if(phaseIs("stop"))
-                            holdIn(prevPhase, advTimeUnit);                          
+                        stop = false;
+//                        holdIn(phase, sigma-e);                        
+//                        if(phaseIs("stop"))
+//                            holdIn(prevPhase, advTimeUnit);                          
                     }    
             }     
         }      

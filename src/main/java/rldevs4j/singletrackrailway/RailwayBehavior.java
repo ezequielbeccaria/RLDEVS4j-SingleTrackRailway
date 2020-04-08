@@ -25,6 +25,7 @@ public class RailwayBehavior implements Behavior {
     private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
     private final List<Event> actions;
     private Double clock;
+    private final Double SAFE_DISTANCE = 200D;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains) {
         this.sections = sections;
@@ -35,7 +36,7 @@ public class RailwayBehavior implements Behavior {
         this.actions = new ArrayList<>();
         this.lastTrainEvents = new HashMap<>();
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getCurrentSpeed(), 0, 0);
+            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getCurrentSpeed(), 0D, 0D);
             lastTrainEvents.put(t.getId(), te);
             this.trasition(null, te);
         }
@@ -122,13 +123,13 @@ public class RailwayBehavior implements Behavior {
         BlockSection nextBs;
         
         if (lastEv.getSpeed() < 0D){
-            nextBs = sections.getById(bs.getId()-1);
-            if(bs.getInitDist()<=lastEv.getEstNextPos())
+            if((bs.getInitDist()+SAFE_DISTANCE) <= lastEv.getEstNextPos())
                 return false;
+            nextBs = sections.getById(bs.getId()-1);            
         }else{
-            nextBs = sections.getById(bs.getId()+1);
-            if(bs.getEndDist()>=lastEv.getEstNextPos())
+            if((bs.getEndDist()-SAFE_DISTANCE) >= lastEv.getEstNextPos())
                 return false;
+            nextBs = sections.getById(bs.getId()+1);            
         }
         
         if(nextBs==null)

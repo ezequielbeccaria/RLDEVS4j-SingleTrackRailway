@@ -44,7 +44,7 @@ public class TimeTable implements Serializable{
             if(EntryType.ARRIBAL.equals(tte.getType()))
                 return tte.getPosition();
         }
-        return null;
+        return details.get(details.size()-1).getPosition();
     }
     
     public TimeTable deepCopy(){

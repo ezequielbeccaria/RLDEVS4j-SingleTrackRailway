@@ -126,10 +126,10 @@ public class SingleTrackRailwayEnvFactory {
         TimeTableEntry tte02 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2);
         TimeTableEntry tte03 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2);
         TimeTableEntry tte04 = new TimeTableEntry(26D, EntryType.ARRIBAL, s3);
-        TimeTableEntry tte05 = new TimeTableEntry(32D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte06 = new TimeTableEntry(37D, EntryType.ARRIBAL, s2);
-        TimeTableEntry tte07 = new TimeTableEntry(40D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte08 = new TimeTableEntry(43D, EntryType.ARRIBAL, s1);
+        TimeTableEntry tte05 = new TimeTableEntry(30D, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte06 = new TimeTableEntry(36D, EntryType.ARRIBAL, s2);
+        TimeTableEntry tte07 = new TimeTableEntry(40D, EntryType.DEPARTURE, s2); //TODO chequera pq sale antes de t=40
+        TimeTableEntry tte08 = new TimeTableEntry(44D, EntryType.ARRIBAL, s1);
         
         List<TimeTableEntry> timeTable0Entries = new ArrayList<>();
         timeTable0Entries.add(tte01);
@@ -149,10 +149,10 @@ public class SingleTrackRailwayEnvFactory {
         TimeTableEntry tte12 = new TimeTableEntry(17D, EntryType.ARRIBAL, s2);
         TimeTableEntry tte13 = new TimeTableEntry(21D, EntryType.DEPARTURE, s2);
         TimeTableEntry tte14 = new TimeTableEntry(27D, EntryType.ARRIBAL, s3);
-        TimeTableEntry tte15 = new TimeTableEntry(33D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte16 = new TimeTableEntry(38D, EntryType.ARRIBAL, s2);
+        TimeTableEntry tte15 = new TimeTableEntry(31D, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte16 = new TimeTableEntry(37D, EntryType.ARRIBAL, s2);
         TimeTableEntry tte17 = new TimeTableEntry(41D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte18 = new TimeTableEntry(44D, EntryType.ARRIBAL, s1);
+        TimeTableEntry tte18 = new TimeTableEntry(48D, EntryType.ARRIBAL, s1);
         
         List<TimeTableEntry> timeTable1Entries = new ArrayList<>();
         timeTable1Entries.add(tte11);

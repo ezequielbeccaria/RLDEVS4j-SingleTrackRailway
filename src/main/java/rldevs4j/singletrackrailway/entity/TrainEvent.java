@@ -14,7 +14,7 @@ public class TrainEvent extends Event{
     private final Double objPos;    
     private final Double estNextPos;
     
-    public TrainEvent(int id, String phase, double position, double speed, double objPos, double estNextPos) {
+    public TrainEvent(int id, String phase, Double position, Double speed, Double objPos, Double estNextPos) {
         super(id, "train"+id, EventType.exogenous);
         this.position = position;
         this.speed = speed;
