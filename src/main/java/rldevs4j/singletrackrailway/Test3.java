@@ -48,7 +48,7 @@ public class Test3 {
         for(int i=0;i<trace.size();i++){
             Step step = trace.get(i);
             INDArray obs = step.getObservation();
-            time.add(obs.getDouble(obs.columns()-1));
+            time.add(obs.getDouble(obs.length()-1));
             t0pos.add(obs.getDouble(0));
             t1pos.add(obs.getDouble(2));            
         }

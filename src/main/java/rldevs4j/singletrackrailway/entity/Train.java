@@ -21,10 +21,8 @@ public class Train extends ExogenousEventGenerator {
     private final Double maxSpeed;   
     private Double currentSpeed;
     private Double position;
-    private final TimeTable initTimeTable;
     private TimeTable timeTable;
     private Double currentObjPos;   
-    private String prevPhase;
     private final Double advTimeUnit = 0.1D;
     
     /**
@@ -39,8 +37,7 @@ public class Train extends ExogenousEventGenerator {
         this.id = id;
         this.stop = false;
         this.maxSpeed = maxSpeed*16.667D; //To meters/s
-        this.currentSpeed = 0D;
-        this.initTimeTable = timeTable;
+        this.currentSpeed = 0D;        
         this.timeTable = timeTable.deepCopy();
         this.position = this.timeTable.getInitPosition();
     }
@@ -80,13 +77,8 @@ public class Train extends ExogenousEventGenerator {
         return currentObjPos;            
     }
     
-    private boolean arribal(Double pos){       
-        if(currentSpeed>0 && pos<currentObjPos){
-            return false;
-        }else if(currentSpeed<0 && pos>currentObjPos){
-            return false;
-        }
-        return true;            
+    private boolean arribal(){       
+        return Objects.equals(position, currentObjPos);            
     }
     
     @Override
@@ -100,7 +92,7 @@ public class Train extends ExogenousEventGenerator {
             position = stop?position:nextPosition(sigma);
             timeTable.nextEntry();
         } else if (this.phaseIs("active")){            
-            if(arribal(position)){
+            if(arribal()){
                 currentSpeed = 0D;                
                 if(timeTable.lastOneEntry()){
                     holdIn("final", 0D); 
@@ -122,29 +114,17 @@ public class Train extends ExogenousEventGenerator {
     public message out() {
         message m = new message();    
         if(!phaseIs("initial")){
-            if(!stop){
-                content con = makeContent(
-                "out", 
-                new TrainEvent(
-                        id, 
-                        phase, 
-                        position, 
-                        Objects.equals(position, currentObjPos)?0D:currentSpeed, 
-                        currentObjPos, 
-                        nextPosition(advTimeUnit)));
-                m.add(con);
-            }else{
-                content con = makeContent(
-                "out", 
-                new TrainEvent(
-                        id, 
-                        phase, 
-                        position, 
-                        0D, 
-                        currentObjPos, 
-                        nextPosition(advTimeUnit)));
-                m.add(con);
-            }            
+            content con = makeContent(
+            "out", 
+            new TrainEvent(
+                    id, 
+                    phase, 
+                    position, 
+                    stop?0D:(arribal()?0D:currentSpeed), 
+                    timeTable.getCurrentEntry(), 
+                    arribal(),
+                    nextPosition(advTimeUnit)));
+            m.add(con);                     
         }
         return m;
     }    
@@ -157,16 +137,8 @@ public class Train extends ExogenousEventGenerator {
                 if(content != null)
                     if(content.get("stop").equals(1D)){     
                         stop = true;
-//                        holdIn(phase, sigma-e);                        
-//                        if(!phaseIs("stop") && !phaseIs("passive")){
-//                            prevPhase = getPhase();                        
-//                            holdIn("stop", 0D);                    
-//                        }
                     } else if(content.get("stop").equals(0D)){
-                        stop = false;
-//                        holdIn(phase, sigma-e);                        
-//                        if(phaseIs("stop"))
-//                            holdIn(prevPhase, advTimeUnit);                          
+                        stop = false;                      
                     }    
             }     
         }      
@@ -188,6 +160,10 @@ public class Train extends ExogenousEventGenerator {
 
     public Integer getId() {
         return id;
+    }
+
+    public TimeTable getTimeTable() {
+        return timeTable;
     }
 
     @Override

@@ -12,7 +12,7 @@ import rldevs4j.utils.FastByteArrayOutputStream;
  * @author Ezequiel Beccaria
  */
 public class TimeTable implements Serializable{
-    private List<TimeTableEntry> details;
+    private final List<TimeTableEntry> details;
     private Integer currentEntry;
 
     public TimeTable(List<TimeTableEntry> details, Integer currentEntry) {
@@ -74,5 +74,13 @@ public class TimeTable implements Serializable{
     
     public boolean lastOneEntry(){
         return currentEntry>=details.size();           
+    }
+
+    public Integer getCurrentEntry() {
+        return currentEntry;
+    }
+
+    public List<TimeTableEntry> getDetails() {
+        return details;
     }
 }

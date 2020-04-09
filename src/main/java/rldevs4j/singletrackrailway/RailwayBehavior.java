@@ -11,6 +11,8 @@ import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
+import rldevs4j.singletrackrailway.entity.TimeTable;
+import rldevs4j.singletrackrailway.entity.TimeTableEntry;
 import rldevs4j.singletrackrailway.entity.Train;
 import rldevs4j.singletrackrailway.entity.TrainEvent;
 
@@ -23,20 +25,22 @@ public class RailwayBehavior implements Behavior {
     private final List<Double> trainsXSection; //Number of trains in each section
     private final Map<Integer, BlockSection> trainsInSection; //Section where is each train
     private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
+    private final List<TimeTable> timeTables; //Last event for each train
     private final List<Event> actions;
     private Double clock;
     private final Double SAFE_DISTANCE = 200D;
 
-    public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains) {
-        this.sections = sections;
+    public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables) {
+        this.sections = sections;        
         this.trainsXSection = new ArrayList<>(sections.size());
         for(int i=0;i<sections.size();i++)
             this.trainsXSection.add(0D);
         this.trainsInSection = new HashMap<>();        
         this.actions = new ArrayList<>();
         this.lastTrainEvents = new HashMap<>();
+        this.timeTables = timeTables;
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getCurrentSpeed(), 0D, 0D);
+            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getCurrentSpeed(), 0, false, 0D);
             lastTrainEvents.put(t.getId(), te);
             this.trasition(null, te);
         }
@@ -75,14 +79,22 @@ public class RailwayBehavior implements Behavior {
         }        
         obs.add(clock); // add clock
 
-        System.out.println(obs); //DEBUG
-
         return Nd4j.create(obs);
     }
 
     @Override
     public float reward() {
-        return 0F;
+        float reward = 0F;
+        for(TrainEvent te : lastTrainEvents.values()){
+            if(te.isArribal()){
+                TimeTableEntry tte = timeTables.get(te.getId()).getDetails().get(te.getTTableId());
+                if(te.getPosition().equals(tte.getPosition())){ //If the train if in the arribal position
+                    reward += tte.getTime() - clock;                
+                }
+                te.setArribal(false); // to avoid computing reward twise
+            }
+        }
+        return reward;
     }
 
     @Override

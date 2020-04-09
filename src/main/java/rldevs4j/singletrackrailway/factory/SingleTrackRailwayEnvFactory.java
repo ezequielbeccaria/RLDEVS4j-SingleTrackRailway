@@ -42,7 +42,7 @@ public class SingleTrackRailwayEnvFactory {
         List<Train> trains = new ArrayList<>();
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, bstm);
+        return new SingleTrackRailwayEnv("env", trains, bstm, false);
     }
     
     public Environment createEnv02(){
@@ -94,7 +94,7 @@ public class SingleTrackRailwayEnvFactory {
         List<Train> trains = new ArrayList<>();
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, sections);
+        return new SingleTrackRailwayEnv("env", trains, sections, false);
     }
     
     public Environment createEnv03(){
@@ -171,6 +171,6 @@ public class SingleTrackRailwayEnvFactory {
         trains.add(train0);
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, sections);
+        return new SingleTrackRailwayEnv("env", trains, sections, true);
     }
 }
