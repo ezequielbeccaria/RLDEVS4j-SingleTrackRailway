@@ -22,6 +22,8 @@ public class TimeTable implements Serializable{
     
     public void nextEntry(){
         currentEntry += 2;
+        if(currentEntry>=details.size())
+            currentEntry = details.size()-1;
     }
     
     public Double getInitPosition(){
@@ -76,11 +78,15 @@ public class TimeTable implements Serializable{
         return currentEntry>=details.size();           
     }
 
-    public Integer getCurrentEntry() {
+    public Integer getCurrentEntryId() {
         return currentEntry;
     }
 
     public List<TimeTableEntry> getDetails() {
         return details;
+    }
+    
+    public TimeTableEntry getCurrentEntry(){
+        return details.get(currentEntry);
     }
 }

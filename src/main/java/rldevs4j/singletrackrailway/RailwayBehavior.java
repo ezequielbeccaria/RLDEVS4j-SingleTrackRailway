@@ -87,7 +87,7 @@ public class RailwayBehavior implements Behavior {
         float reward = 0F;
         for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArribal()){
-                TimeTableEntry tte = timeTables.get(te.getId()).getDetails().get(te.getTTableId());
+                TimeTableEntry tte = timeTables.get(te.getId()).getCurrentEntry();
                 if(te.getPosition().equals(tte.getPosition())){ //If the train if in the arribal position
                     reward += tte.getTime() - clock;                
                 }
