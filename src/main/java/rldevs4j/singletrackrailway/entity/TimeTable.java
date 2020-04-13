@@ -21,7 +21,7 @@ public class TimeTable implements Serializable{
     }
     
     public void nextEntry(){
-        currentEntry++;
+        currentEntry += 2;
     }
     
     public Double getInitPosition(){

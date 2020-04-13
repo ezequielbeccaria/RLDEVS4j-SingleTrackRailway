@@ -38,7 +38,7 @@ public class SingleTrackRailwayEnvFactory {
         timeTableEntries.add(tte4);        
         
         TimeTable timeTable = new TimeTable(timeTableEntries, 0);
-        Train train1 = new Train(1, "train1", 80D, timeTable);
+        Train train1 = new Train(1, "train1", 80D, timeTable, bstm);
         List<Train> trains = new ArrayList<>();
         trains.add(train1);
         
@@ -57,17 +57,17 @@ public class SingleTrackRailwayEnvFactory {
         BlockSection bs23 = new BlockSection(8, 12001D, 13999D, 1);
         Station s3 = new Station(9, 14000D, 14000D, 2, false, true);
         
-        BlockSectionTreeMap sections = new BlockSectionTreeMap();
-        sections.put(s1);
-        sections.put(bs11);
-        sections.put(bs12);
-        sections.put(bs13);
-        sections.put(bs14);
-        sections.put(s2);
-        sections.put(bs21);
-        sections.put(bs22);
-        sections.put(bs23);
-        sections.put(s3);
+        BlockSectionTreeMap bstm = new BlockSectionTreeMap();
+        bstm.put(s1);
+        bstm.put(bs11);
+        bstm.put(bs12);
+        bstm.put(bs13);
+        bstm.put(bs14);
+        bstm.put(s2);
+        bstm.put(bs21);
+        bstm.put(bs22);
+        bstm.put(bs23);
+        bstm.put(s3);
         
         TimeTableEntry tte1 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1);
         TimeTableEntry tte2 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2);
@@ -89,12 +89,12 @@ public class SingleTrackRailwayEnvFactory {
         timeTableEntries.add(tte8);        
         
         TimeTable timeTable = new TimeTable(timeTableEntries, 0);
-        Train train1 = new Train(0, "train0", 80D, timeTable);
+        Train train1 = new Train(0, "train0", 80D, timeTable, bstm);
         
         List<Train> trains = new ArrayList<>();
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, sections, false);
+        return new SingleTrackRailwayEnv("env", trains, bstm, false);
     }
     
     public Environment createEnv03(){
@@ -109,17 +109,17 @@ public class SingleTrackRailwayEnvFactory {
         BlockSection bs23 = new BlockSection(8, 12001D, 13999D, 1);
         Station s3 = new Station(9, 14000D, 14000D, 3, false, true);
         
-        BlockSectionTreeMap sections = new BlockSectionTreeMap();
-        sections.put(s1);
-        sections.put(bs11);
-        sections.put(bs12);
-        sections.put(bs13);
-        sections.put(bs14);
-        sections.put(s2);
-        sections.put(bs21);
-        sections.put(bs22);
-        sections.put(bs23);
-        sections.put(s3);
+        BlockSectionTreeMap bstm = new BlockSectionTreeMap();
+        bstm.put(s1);
+        bstm.put(bs11);
+        bstm.put(bs12);
+        bstm.put(bs13);
+        bstm.put(bs14);
+        bstm.put(s2);
+        bstm.put(bs21);
+        bstm.put(bs22);
+        bstm.put(bs23);
+        bstm.put(s3);
         
         //Train0 Setup
         TimeTableEntry tte01 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1);
@@ -142,14 +142,14 @@ public class SingleTrackRailwayEnvFactory {
         timeTable0Entries.add(tte08);        
         
         TimeTable timeTable0 = new TimeTable(timeTable0Entries, 0);
-        Train train0 = new Train(0, "train0", 80D, timeTable0);
+        Train train0 = new Train(0, "train0", 80D, timeTable0, bstm);
         
         //Train1 Setup
         TimeTableEntry tte11 = new TimeTableEntry(11D, EntryType.DEPARTURE, s1);
         TimeTableEntry tte12 = new TimeTableEntry(17D, EntryType.ARRIBAL, s2);
         TimeTableEntry tte13 = new TimeTableEntry(21D, EntryType.DEPARTURE, s2);
         TimeTableEntry tte14 = new TimeTableEntry(27D, EntryType.ARRIBAL, s3);
-        TimeTableEntry tte15 = new TimeTableEntry(31D, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte15 = new TimeTableEntry(29D, EntryType.DEPARTURE, s3);
         TimeTableEntry tte16 = new TimeTableEntry(37D, EntryType.ARRIBAL, s2);
         TimeTableEntry tte17 = new TimeTableEntry(41D, EntryType.DEPARTURE, s2);
         TimeTableEntry tte18 = new TimeTableEntry(48D, EntryType.ARRIBAL, s1);
@@ -165,12 +165,12 @@ public class SingleTrackRailwayEnvFactory {
         timeTable1Entries.add(tte18);        
         
         TimeTable timeTable1 = new TimeTable(timeTable1Entries, 0);
-        Train train1 = new Train(1, "train1", 100D, timeTable1);
+        Train train1 = new Train(1, "train1", 70D, timeTable1, bstm);
         
         List<Train> trains = new ArrayList<>();
         trains.add(train0);
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, sections, true);
+        return new SingleTrackRailwayEnv("env", trains, bstm, true);
     }
 }

@@ -25,4 +25,8 @@ public class Station extends BlockSection implements Serializable{
         return last;
     }
     
+    @Override
+    public boolean isStation(){
+        return true;
+    }
 }

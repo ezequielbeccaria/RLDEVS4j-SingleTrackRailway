@@ -17,9 +17,7 @@ public class BlockSectionTreeMap extends TreeMap<Double, BlockSection>{
 
     public BlockSectionTreeMap() {
         addCounter = 0;
-    }
-    
-    
+    }    
     
     public void put(BlockSection bs){
         this.put(bs.getInitDist(), bs);
@@ -57,4 +55,13 @@ public class BlockSectionTreeMap extends TreeMap<Double, BlockSection>{
                 return bs;
         return null;
     } 
+    
+    public BlockSection getNextSection(Integer currentId, Double direction){
+        BlockSection current = getById(currentId);
+        if(direction == 1D)
+            return getById(currentId+1);
+        if(direction == -1D)
+            return getById(currentId-1);
+        return current;
+    }
 }

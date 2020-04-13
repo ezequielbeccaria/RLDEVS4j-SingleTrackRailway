@@ -20,7 +20,7 @@ public class Test1 {
     public Test1() {
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
         Environment env = factory.createEnv01();
-        
+        env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         
         facade.simulateToTime(50);

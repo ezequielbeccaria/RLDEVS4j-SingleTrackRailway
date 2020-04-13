@@ -40,7 +40,7 @@ public class RailwayBehavior implements Behavior {
         this.lastTrainEvents = new HashMap<>();
         this.timeTables = timeTables;
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getCurrentSpeed(), 0, false, 0D);
+            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getSpeed(), 0, false);
             lastTrainEvents.put(t.getId(), te);
             this.trasition(null, te);
         }
@@ -75,7 +75,7 @@ public class RailwayBehavior implements Behavior {
         
         List<BlockSection> bsList = (List<BlockSection>) sections.values();
         for(int i=0;i<bsList.size();i++){
-            obs.add(bsList.get(i).isAvailable(trainsXSection.get(i)));
+            obs.add(bsList.get(i).isAvailable()?1D:0D);
         }        
         obs.add(clock); // add clock
 
@@ -110,11 +110,11 @@ public class RailwayBehavior implements Behavior {
     @Override
     public ExogenousEventActivation activeEvents() {
         Map<String,Map<String,Double>> content = new HashMap<>();
-        for(TrainEvent te : lastTrainEvents.values()){
-            Map<String,Double> c = new HashMap<>();   
-            c.put("stop", blockTrain(te.getId())?1D:0D);                
-            content.put(te.getName(), c);
-        }        
+//        for(TrainEvent te : lastTrainEvents.values()){
+//            Map<String,Double> c = new HashMap<>();   
+//            c.put("stop", blockTrain(te.getId())?1D:0D);                
+//            content.put(te.getName(), c);
+//        }        
         ExogenousEventActivation eea = new ExogenousEventActivation(content);
         return eea;
     }
@@ -122,32 +122,5 @@ public class RailwayBehavior implements Behavior {
     @Override
     public List<Event> getAllActios() {
         return actions;
-    }    
-    
-    private boolean blockTrain(Integer id){
-        BlockSection bs = trainsInSection.get(id);
-        TrainEvent lastEv = lastTrainEvents.get(id);
-      
-        if("passive".equalsIgnoreCase(lastEv.getPhase()) || "initial".equalsIgnoreCase(lastEv.getPhase()))
-            return false;
-        
-        //get next section 
-        BlockSection nextBs;
-        
-        if (lastEv.getSpeed() < 0D){
-            if((bs.getInitDist()+SAFE_DISTANCE) <= lastEv.getEstNextPos())
-                return false;
-            nextBs = sections.getById(bs.getId()-1);            
-        }else{
-            if((bs.getEndDist()-SAFE_DISTANCE) >= lastEv.getEstNextPos())
-                return false;
-            nextBs = sections.getById(bs.getId()+1);            
-        }
-        
-        if(nextBs==null)
-            return false;           
-        
-        return !(nextBs.isAvailable(trainsXSection.get(nextBs.getId())) == 0D);
     }
-    
 }

@@ -1,0 +1,13 @@
+@startuml
+
+[*] --> initial
+initial --> active
+initial: currectposition
+initial: currectSection
+active --> passive
+passive --> active
+
+active --> final
+final --> [*]
+
+@enduml
