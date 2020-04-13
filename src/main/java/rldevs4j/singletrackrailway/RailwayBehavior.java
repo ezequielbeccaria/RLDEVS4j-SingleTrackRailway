@@ -8,6 +8,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.base.env.gsmdp.Behavior;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
+import rldevs4j.base.env.msg.Continuous;
 import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
@@ -27,8 +28,8 @@ public class RailwayBehavior implements Behavior {
     private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
     private final List<TimeTable> timeTables; //Last event for each train
     private final List<Event> actions;
+    private Continuous action;
     private Double clock;
-    private final Double SAFE_DISTANCE = 200D;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables) {
         this.sections = sections;        
@@ -59,7 +60,10 @@ public class RailwayBehavior implements Behavior {
             trainsInSection.put(tEvent.getId(), bs);           
             trainsXSection.set(bs.getId(), trainsXSection.get(bs.getId()) + 1D);
             lastTrainEvents.put(e.getId(), tEvent);        
-        }        
+        }   
+        if(e instanceof Continuous){
+            action = (Continuous) e;           
+        }
         clock = state!=null?state.getDouble(state.columns()-1):0D;
     }
 
@@ -109,13 +113,16 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public ExogenousEventActivation activeEvents() {
-        Map<String,Map<String,Double>> content = new HashMap<>();
-//        for(TrainEvent te : lastTrainEvents.values()){
-//            Map<String,Double> c = new HashMap<>();   
-//            c.put("stop", blockTrain(te.getId())?1D:0D);                
-//            content.put(te.getName(), c);
-//        }        
+        Map<String,Map<String,Double>> content = new HashMap<>();       
+        if(action != null){
+            for(int i=0;i<action.getValue().length;i++){
+                Map<String,Double> c = new HashMap<>();   
+                c.put("update", action.getValue()[i]);                
+                content.put(lastTrainEvents.get(i).getName(), c);
+            }    
+        }
         ExogenousEventActivation eea = new ExogenousEventActivation(content);
+        action = null;
         return eea;
     }
 

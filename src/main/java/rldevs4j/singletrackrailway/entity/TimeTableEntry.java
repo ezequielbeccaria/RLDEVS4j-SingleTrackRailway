@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author Ezequiel Beccaria
  */
 public class TimeTableEntry implements Serializable{
-    private final Double time;
+    private Double time;
     private final EntryType type;
     private final Station station;
 
@@ -33,5 +33,9 @@ public class TimeTableEntry implements Serializable{
     
     public Double getPosition(){
         return station.getInitDist();
+    }
+    
+    public void updateTime(double value){
+        this.time += value;
     }
 }

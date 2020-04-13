@@ -89,4 +89,10 @@ public class TimeTable implements Serializable{
     public TimeTableEntry getCurrentEntry(){
         return details.get(currentEntry);
     }
+    
+    public void updateTimes(double value){
+        for(int i=currentEntry;i<details.size();i++){
+            details.get(i).updateTime(value);
+        }
+    }
 }

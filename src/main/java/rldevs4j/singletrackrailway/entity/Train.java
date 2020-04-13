@@ -1,8 +1,10 @@
 package rldevs4j.singletrackrailway.entity;
 
+import java.util.Map;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
+import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
 import rldevs4j.utils.DoubleUtils;
 
@@ -134,7 +136,14 @@ public class Train extends ExogenousEventGenerator {
     }    
 
     @Override
-    public void deltext(double e, message x) {         
+    public void deltext(double e, message x) {                
+        for (int i = 0; i < x.getLength(); i++) {
+            if (messageOnPort(x, "in", i)) {       
+                Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
+                if(content != null)
+                    this.updateTimeTable(content.get("update"));
+            }     
+        }      
         Continue(e);
     }
 
@@ -158,6 +167,10 @@ public class Train extends ExogenousEventGenerator {
     public Double getSpeed() {
         return speed;
     }    
+    
+    public void updateTimeTable(double value){
+        this.timeTable.updateTimes(value);
+    }
 
     @Override
     public ExogenousEventGenerator clone() {
