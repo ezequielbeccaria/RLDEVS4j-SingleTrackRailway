@@ -4,6 +4,8 @@ import java.util.Map;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
+import model.simulation.CoordinatorInterface;
+import model.simulation.CoupledCoordinatorInterface;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
 import rldevs4j.utils.DoubleUtils;
@@ -57,7 +59,13 @@ public class Train extends ExogenousEventGenerator {
     }
     
     private Double currentGlobalTime(){
-        return this.getSim().getRootParent().getTL();
+        CoordinatorInterface globalCoordnator = this.getSim().getRootParent();
+        CoupledCoordinatorInterface parent = this.getSim().getParent();
+        while(globalCoordnator==null){
+            globalCoordnator = parent.getRootParent();
+            parent = parent.getParent();
+        }        
+        return globalCoordnator.getTL();
     }
     
     private Double arribalTime(double npos, double cpos, double speed){
@@ -140,11 +148,16 @@ public class Train extends ExogenousEventGenerator {
         for (int i = 0; i < x.getLength(); i++) {
             if (messageOnPort(x, "in", i)) {       
                 Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
-                if(content != null)
-                    this.updateTimeTable(content.get("update"));
+                if(content != null){
+                    this.updateTimeTable(content.get("update"));                    
+                }    
             }     
         }      
-        Continue(e);
+        if(phaseIs("passive")){
+            holdIn("passive", getNextDepartureTime());
+        }else{
+            Continue(e);
+        }
     }
 
     @Override

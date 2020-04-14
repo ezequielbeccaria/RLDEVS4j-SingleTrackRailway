@@ -32,6 +32,10 @@ public class SingleTrackRailwayEnv extends Environment{
             addCoupling(t, "out", so, "event");
             addCoupling(so, "event_genearator", t, "in");
         }        
+        
+        //add external couplings
+        addCoupling(so, "step", this, "step");
+        addCoupling(this, "action", so, "event");
     }
 
     @Override

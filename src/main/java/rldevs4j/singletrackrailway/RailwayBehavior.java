@@ -41,7 +41,7 @@ public class RailwayBehavior implements Behavior {
         this.lastTrainEvents = new HashMap<>();
         this.timeTables = timeTables;
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), t.getSpeed(), 0, false);
+            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), 0D, 0, false);
             lastTrainEvents.put(t.getId(), te);
             this.trasition(null, te);
         }
