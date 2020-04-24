@@ -18,16 +18,18 @@ import rldevs4j.singletrackrailway.entity.Train;
  */
 public class SingleTrackRailwayEnv extends Environment{
     private final StateObserver so;
+    private final List<Train> trains;
     
     public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, boolean debug) {
         super(name);
         List<TimeTable> tTables = new ArrayList<>();        
         RailwayBehavior rb = new RailwayBehavior(sections, trains, tTables);
         so = new StateObserver(rb, debug);
-
+        this.trains = trains;
+        
         add(so);               
         for(Train t : trains){
-            tTables.add(t.getTimeTable());
+            tTables.add(t.getTimeTable().deepCopy());
             add(t);
             addCoupling(t, "out", so, "event");
             addCoupling(so, "event_genearator", t, "in");
@@ -37,6 +39,17 @@ public class SingleTrackRailwayEnv extends Environment{
         addCoupling(so, "step", this, "step");
         addCoupling(this, "action", so, "event");
     }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        so.initialize();
+        trains.forEach((t) -> {
+            t.initialize();
+        });
+    }
+    
+    
 
     @Override
     public INDArray getInitialState() {

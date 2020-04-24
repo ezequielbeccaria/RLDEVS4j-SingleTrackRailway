@@ -3,19 +3,21 @@ package rldevs4j.singletrackrailway;
 import facade.DevsSuiteFacade;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.JFrame;
 import org.math.plot.Plot2DPanel;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.rng.Random;
-import rldevs4j.base.agent.preproc.NoPreprocessing;
+import rldevs4j.base.agent.Agent;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.RLEnvironment;
 import rldevs4j.base.env.msg.Step;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
-import rldevs4j.agents.dummy.DummyAgent;
+import rldevs4j.singletrackrailway.factory.AgentFactory;
 import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
 import rldevs4j.utils.CollectionsUtils;
 
@@ -23,24 +25,39 @@ import rldevs4j.utils.CollectionsUtils;
  *
  * @author Ezequiel Beccaria
  */
-public class Test4 extends Experiment{
+public class Test5 extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 1;        
+    private final int EPISODES = 10000;        
     private final double EPISODE_MAX_TIME=100;    
+    private final Map<String, Object> agentParams;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new Test4();
+        Experiment exp = new Test5();
         exp.run();
         
         System.exit(0);
     }
 
-    public Test4() {
-        super(0, "Test4", 1, false, false, "/home/ezequiel/experiments/", null);
-        this.facade = new DevsSuiteFacade();        
+    public Test5() {
+        super(0, "Test5", 1, false, false, "/home/ezequiel/experiments/", null);
+        this.facade = new DevsSuiteFacade();                
+        this.agentParams = new HashMap<>();
+        this.agentParams.put("OBS_DIM", 25);
+        this.agentParams.put("ACTION_DIM", 2);
+        this.agentParams.put("LEARNING_RATE", 1e-4);
+        this.agentParams.put("HIDDEN_SIZE", 128);
+        this.agentParams.put("TAHN_ACTION_LIMIT", 5D);
+        this.agentParams.put("L2", 1e-3);
+        this.agentParams.put("DISCOUNT_RATE", 0.99);
+        this.agentParams.put("LAMBDA_GAE", 0.96);
+        this.agentParams.put("EPSILON_CLIP", 0.2);
+        this.agentParams.put("TARGET_KL", 0.02);
+        this.agentParams.put("EPOCHS", 3);
+        this.agentParams.put("HORIZON", 10);
+        this.agentParams.put("ENTROPY_COEF", 0.02);
     }
     
     private void plotTrace(List<Step> trace){
@@ -82,10 +99,10 @@ public class Test4 extends Experiment{
         
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
         
-        Environment env = factory.createEnv03(true);
+        Environment env = factory.createEnv03(false);
         env.initialize(); //initialize model state
         
-        DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing());
+        Agent agent = AgentFactory.ppo(agentParams);
         
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
         
@@ -107,11 +124,13 @@ public class Test4 extends Experiment{
 
             // reset agent    
             agent.episodeFinished();
-            plotTrace(env.getTrace());
+            
+            if(i==EPISODES)
+                plotTrace(env.getTrace());
+            
             if(i%1==0)
                 logger.log(Level.INFO, "Episode {0} Terminated. Reward: {1}. Avg-Reward: {2}", new Object[]{i, result.getLastEpisodeReward(), result.getLastAverageReward()});
-        }
-        
+        }        
         logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});
               
         return result; //Training results    

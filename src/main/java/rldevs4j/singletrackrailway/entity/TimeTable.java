@@ -17,6 +17,10 @@ public class TimeTable implements Serializable{
 
     public TimeTable(List<TimeTableEntry> details, Integer currentEntry) {
         this.details = details;
+        initialize();
+    }
+    
+    public void initialize(){
         this.currentEntry = 0;
     }
     
@@ -88,6 +92,15 @@ public class TimeTable implements Serializable{
     
     public TimeTableEntry getCurrentEntry(){
         return details.get(currentEntry);
+    }
+    
+    public TimeTableEntry getNextArribalEntry(int id){
+        for(int i=id;i<details.size();i++){
+            TimeTableEntry tte = details.get(i);
+            if(EntryType.ARRIBAL.equals(tte.getType()))
+                return tte;
+        }
+        return null;
     }
     
     public void updateTimes(double value){

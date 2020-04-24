@@ -97,7 +97,7 @@ public class SingleTrackRailwayEnvFactory {
         return new SingleTrackRailwayEnv("env", trains, bstm, false);
     }
     
-    public Environment createEnv03(){
+    public Environment createEnv03(boolean debug){
         Station s1 = new Station(0, 0D, 0D, 3, true, false);
         BlockSection bs11 = new BlockSection(1, 1D, 2000D, 1);
         BlockSection bs12 = new BlockSection(2, 2001D, 4000D, 1);
@@ -171,6 +171,6 @@ public class SingleTrackRailwayEnvFactory {
         trains.add(train0);
         trains.add(train1);
         
-        return new SingleTrackRailwayEnv("env", trains, bstm, true);
+        return new SingleTrackRailwayEnv("env", trains, bstm, debug);
     }
 }

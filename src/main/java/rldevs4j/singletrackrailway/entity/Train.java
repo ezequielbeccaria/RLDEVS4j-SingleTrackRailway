@@ -1,6 +1,7 @@
 package rldevs4j.singletrackrailway.entity;
 
 import java.util.Map;
+import java.util.Objects;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
@@ -47,6 +48,7 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public void initialize() {     
         holdIn("initial", 0D);
+        this.timeTable.initialize();
     }
     
     private Double getNextDepartureTime(){
@@ -136,7 +138,7 @@ public class Train extends ExogenousEventGenerator {
                     position, 
                     phaseIs("active")?direction*speed:0D, 
                     timeTable.getCurrentEntryId(), 
-                    currentSection.isStation()) //Arribal?       
+                    Objects.equals(currentObjPos, position)) //Arribal?       
             );              
             m.add(con);                     
         }

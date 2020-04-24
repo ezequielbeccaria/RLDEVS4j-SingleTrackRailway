@@ -25,9 +25,10 @@ public class RailwayBehavior implements Behavior {
     private final BlockSectionTreeMap sections;
     private final List<Double> trainsXSection; //Number of trains in each section
     private final Map<Integer, BlockSection> trainsInSection; //Section where is each train
-    private final Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
+    private Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
     private final List<TimeTable> timeTables; //Last event for each train
     private final List<Event> actions;
+    private final List<Train> trains;
     private Continuous action;
     private Double clock;
 
@@ -38,8 +39,14 @@ public class RailwayBehavior implements Behavior {
             this.trainsXSection.add(0D);
         this.trainsInSection = new HashMap<>();        
         this.actions = new ArrayList<>();
-        this.lastTrainEvents = new HashMap<>();
         this.timeTables = timeTables;
+        this.trains = trains;
+        initialize();
+    }
+    
+    @Override
+    public void initialize(){
+        lastTrainEvents = new HashMap<>();
         for(Train t : trains){            
             TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), 0D, 0, false);
             lastTrainEvents.put(t.getId(), te);
@@ -91,10 +98,8 @@ public class RailwayBehavior implements Behavior {
         float reward = 0F;
         for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArribal()){
-                TimeTableEntry tte = timeTables.get(te.getId()).getCurrentEntry();
-                if(te.getPosition().equals(tte.getPosition())){ //If the train if in the arribal position
-                    reward += tte.getTime() - clock;                
-                }
+                TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());                
+                reward += tte.getTime() - clock;
                 te.setArribal(false); // to avoid computing reward twise
             }
         }
@@ -115,7 +120,7 @@ public class RailwayBehavior implements Behavior {
     public ExogenousEventActivation activeEvents() {
         Map<String,Map<String,Double>> content = new HashMap<>();       
         if(action != null){
-            for(int i=0;i<action.getValue().length;i++){
+            for(int i=0;i<lastTrainEvents.size();i++){
                 Map<String,Double> c = new HashMap<>();   
                 c.put("update", action.getValue()[i]);                
                 content.put(lastTrainEvents.get(i).getName(), c);
