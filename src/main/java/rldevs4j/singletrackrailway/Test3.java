@@ -32,7 +32,7 @@ public class Test3 {
         env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         
-        facade.simulateToTime(50);
+        facade.simulateToTime(3000);
         
         plotTrace(env.getTrace());
     }
@@ -56,11 +56,11 @@ public class Test3 {
         // add a line plot to the PlotPanel                
         plot.addLinePlot("Train0", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t0pos));   
         plot.addLinePlot("Train1", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t1pos));   
-        plot.addLinePlot("bs1", Color.DARK_GRAY, new double[]{0D, 2000D}, new double[]{50D, 2000D});   
-        plot.addLinePlot("bs2", Color.DARK_GRAY, new double[]{0D, 4000D}, new double[]{50D, 4000D});   
-        plot.addLinePlot("bs3", Color.DARK_GRAY, new double[]{0D, 6000D}, new double[]{50D, 6000D});   
-        plot.addLinePlot("bs4", Color.DARK_GRAY, new double[]{0D, 10000D}, new double[]{50D, 10000D});   
-        plot.addLinePlot("bs5", Color.DARK_GRAY, new double[]{0D, 12000D}, new double[]{50D, 12000D});   
+//        plot.addLinePlot("bs1", Color.DARK_GRAY, new double[]{0D, 2000D}, new double[]{50D, 2000D});   
+//        plot.addLinePlot("bs2", Color.DARK_GRAY, new double[]{0D, 4000D}, new double[]{50D, 4000D});   
+//        plot.addLinePlot("bs3", Color.DARK_GRAY, new double[]{0D, 6000D}, new double[]{50D, 6000D});   
+//        plot.addLinePlot("bs4", Color.DARK_GRAY, new double[]{0D, 10000D}, new double[]{50D, 10000D});   
+//        plot.addLinePlot("bs5", Color.DARK_GRAY, new double[]{0D, 12000D}, new double[]{50D, 12000D});   
         
         // put the PlotPanel in a JFrame, as a JPanel
         JFrame frame = new JFrame("Results");

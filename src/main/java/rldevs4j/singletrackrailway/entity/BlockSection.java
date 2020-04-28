@@ -51,7 +51,7 @@ public class BlockSection implements Serializable{
     
     public boolean isAvailable(){
         return trains.size()<capacity;
-    }
+    }    
     
     public boolean addMe(Train t){
         if(isAvailable())
@@ -61,5 +61,9 @@ public class BlockSection implements Serializable{
     
     public boolean removeMe(Train t){        
         return trains.remove(t);        
+    }
+    
+    public boolean inThisSection(double position){
+        return this.initDist<= position && position <= this.endDist;
     }
 }

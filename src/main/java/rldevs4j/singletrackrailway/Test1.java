@@ -23,7 +23,7 @@ public class Test1 {
         env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         
-        facade.simulateToTime(50);
+        facade.simulateToTime(2000D);
     }
     
 }

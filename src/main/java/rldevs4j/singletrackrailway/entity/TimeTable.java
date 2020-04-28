@@ -44,6 +44,15 @@ public class TimeTable implements Serializable{
         return null;
     }
     
+    public BlockSection getNextObjSection(){
+        for(int i=currentEntry;i<details.size();i++){
+            TimeTableEntry tte = details.get(i);
+            if(EntryType.ARRIBAL.equals(tte.getType()))
+                return tte.getStation();
+        }
+        return details.get(details.size()-1).getStation();
+    }
+    
     public Double getNextArribalPos(){
         for(int i=currentEntry;i<details.size();i++){
             TimeTableEntry tte = details.get(i);

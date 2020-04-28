@@ -23,9 +23,8 @@ public class Train extends ExogenousEventGenerator {
     private TimeTable timeTable;
     private BlockSectionTreeMap sections;
     private BlockSection currentSection;
-    private Double currentObjPos;   
-    private final Double advTimeUnit = 0.5D;
-    private Double activeSig;
+    private BlockSection objetiveSection;   
+    private final Double activeSigma = 1D;
     
     /**
      * 
@@ -37,19 +36,20 @@ public class Train extends ExogenousEventGenerator {
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections) {
         super(name, null, "passive", DevsInterface.INFINITY);
         this.id = id;
-        this.speed = maxSpeed*16.667D; //To meters/s
+        this.speed = maxSpeed/3.6D; //To meters/s
         this.direction = 1D;     
         this.timeTable = timeTable.deepCopy();
-        this.sections = sections;
-        this.position = this.timeTable.getInitPosition();
-        this.currentSection = sections.get(this.position);
-        this.currentSection.addMe(this);
+        this.sections = sections;  
+        initialize();
     }
     
     @Override
-    public void initialize() {     
-        holdIn("initial", 0D);
+    public void initialize() {             
         this.timeTable.initialize();
+        this.position = this.timeTable.getInitPosition();
+        this.currentSection = sections.get(this.position);
+        this.currentSection.addMe(this);        
+        holdIn("initial", 0D);
     }
     
     private Double getNextDepartureTime(){
@@ -69,74 +69,71 @@ public class Train extends ExogenousEventGenerator {
             parent = parent.getParent();
         }        
         return globalCoordnator.getTL();
-    }
-    
-    private Double arribalTime(double npos, double cpos, double speed){
-        return (npos-cpos)/speed;
-    }
+    }   
     
     private Double nextPos(double cpos, double speed, double t){
-        return DoubleUtils.round(cpos + speed*t, 0);
+        return Math.floor(cpos + speed*t);
     }
     
     @Override
     public void deltint() {
-        if(this.phaseIs("initial")){
+        if(phaseIs("initial")){
             intInitial();
-        } else if(this.phaseIs("passive")){
+        } else if(phaseIs("passive")){
             intPassive();                                   
-        } else if (this.phaseIs("active")){  
+        } else if (phaseIs("active") || phaseIs("waiting")){  
             intActive();
-        } else if(this.phaseIs("final")){
+        } else if(phaseIs("final")){
             holdIn("final", INFINITY);
         }
     }
     
-    private void intInitial(){
-        currentObjPos = timeTable.getNextArribalPos();            
+    private void intInitial(){            
         holdIn("passive", getNextDepartureTime());
     }
     
     private void intPassive(){
-        direction = currentObjPos > position? 1D : -1D;
-        BlockSection nBs = sections.getNextSection(currentSection.getId(), direction);
-        if(nBs.isAvailable()){
-            if(currentSection.removeMe(this)){
-                currentSection = nBs;
-                currentSection.addMe(this);
-                Double finalPosition = currentSection.getObjDist(direction);
-                activeSig = arribalTime(finalPosition, position, direction * speed)/(currentSection.isStation()?1D:10D);                
-                position = nextPos(position, direction * speed, activeSig);
-                holdIn("active", activeSig); 
-            }                
-        }else{
-            holdIn("passive", advTimeUnit); 
-        }
+        this.objetiveSection = timeTable.getNextObjSection();
+        direction = currentSection.getId() < objetiveSection.getId()? 1D : -1D;
+        trainMove();        
     }
     
     private void intActive(){
-        if(Objects.equals(currentSection.getObjDist(direction), position)){
-            if(currentSection.isStation()){
-                timeTable.nextEntry();
-                currentObjPos = timeTable.getNextArribalPos();     
-                double nextSigma = getNextDepartureTime();
-                if(nextSigma == INFINITY)
-                    holdIn("final", 0D);
-                else
-                    holdIn("passive", nextSigma);
-            }else{
-                holdIn("passive", 0D);
-            }
+        if(arribal()){
+            timeTable.nextEntry();
+            double nextSigma = getNextDepartureTime();
+            if(nextSigma == INFINITY)
+                holdIn("final", 0D);
+            else
+                holdIn("passive", nextSigma);            
         }else{
-            position = nextPos(position, direction * speed, activeSig);
-            holdIn("active", activeSig); 
+            trainMove(); 
         }              
     }     
+    
+    private void trainMove(){    
+        BlockSection nBs = sections.getNextSection(currentSection.getId(), direction);
+        if(nBs.isAvailable() || !nBs.inThisSection(nextPos(position, direction * speed, activeSigma))){ 
+            //Calc next position
+            position = nextPos(position, direction * speed, activeSigma);
+            //Check if the train is still in the current section.
+            if(!currentSection.inThisSection(position)){
+                //is in the next section
+                currentSection.removeMe(this);
+                currentSection = nBs;
+                currentSection.addMe(this);
+            }
+            holdIn("active", activeSigma); 
+        }else{
+            holdIn("waiting", activeSigma); 
+        }
+        
+    }
     
     @Override
     public message out() {
         message m = new message();    
-        if(phaseIs("active") || phaseIs("final") || (phaseIs("passive") && sigma > 0)){
+        if(!phaseIs("initial") && sigma > 0){
             content con = makeContent(
             "out", 
             new TrainEvent(
@@ -145,7 +142,7 @@ public class Train extends ExogenousEventGenerator {
                     position, 
                     phaseIs("active")?direction*speed:0D, 
                     timeTable.getCurrentEntryId(), 
-                    !phaseIs("final") && Objects.equals(currentObjPos, position)) //Arribal?       
+                    arribal())       
             );              
             m.add(con);                     
         }
@@ -171,7 +168,7 @@ public class Train extends ExogenousEventGenerator {
 
     @Override
     public double nextSigma() {
-        return advTimeUnit;
+        return activeSigma;
     }
 
     public Double getPosition() {
@@ -192,6 +189,11 @@ public class Train extends ExogenousEventGenerator {
     
     public void updateTimeTable(double value){
         this.timeTable.updateTimes(value);
+    }
+    
+    public boolean arribal(){
+        if(!phaseIs("active")) return false;            
+        return currentSection.getId().equals(objetiveSection.getId());
     }
 
     @Override

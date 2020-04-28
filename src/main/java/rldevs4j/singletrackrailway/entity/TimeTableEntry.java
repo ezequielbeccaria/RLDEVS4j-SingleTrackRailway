@@ -38,4 +38,8 @@ public class TimeTableEntry implements Serializable{
     public void updateTime(double value){
         this.time += value;
     }
+
+    public BlockSection getStation() {
+        return station;
+    }
 }
