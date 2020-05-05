@@ -22,6 +22,10 @@ public class BlockSection implements Serializable{
         this.capacity = capacity;
         this.trains = new ArrayList<>();
     }
+    
+    public void reset(){
+        this.trains = new ArrayList<>();
+    }
 
     public Integer getId() {
         return id;

@@ -1,7 +1,6 @@
 package rldevs4j.singletrackrailway;
 
 import facade.DevsSuiteFacade;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +26,8 @@ import rldevs4j.utils.CollectionsUtils;
  */
 public class Test5 extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 10000;        
-    private final double EPISODE_MAX_TIME=100;    
+    private final int EPISODES = 1;        
+    private final double EPISODE_MAX_TIME=3000;    
     private final Map<String, Object> agentParams;
 
     /**
@@ -49,7 +48,7 @@ public class Test5 extends Experiment{
         this.agentParams.put("ACTION_DIM", 2);
         this.agentParams.put("LEARNING_RATE", 1e-4);
         this.agentParams.put("HIDDEN_SIZE", 128);
-        this.agentParams.put("TAHN_ACTION_LIMIT", 5D);
+        this.agentParams.put("TAHN_ACTION_LIMIT", 300D);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
         this.agentParams.put("LAMBDA_GAE", 0.96);
@@ -79,11 +78,11 @@ public class Test5 extends Experiment{
         // add a line plot to the PlotPanel                
         plot.addLinePlot("Train0", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t0pos));   
         plot.addLinePlot("Train1", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t1pos));   
-        plot.addLinePlot("bs1", Color.DARK_GRAY, new double[]{0D, 2000D}, new double[]{EPISODE_MAX_TIME, 2000D});   
-        plot.addLinePlot("bs2", Color.DARK_GRAY, new double[]{0D, 4000D}, new double[]{EPISODE_MAX_TIME, 4000D});   
-        plot.addLinePlot("bs3", Color.DARK_GRAY, new double[]{0D, 6000D}, new double[]{EPISODE_MAX_TIME, 6000D});   
-        plot.addLinePlot("bs4", Color.DARK_GRAY, new double[]{0D, 10000D}, new double[]{EPISODE_MAX_TIME, 10000D});   
-        plot.addLinePlot("bs5", Color.DARK_GRAY, new double[]{0D, 12000D}, new double[]{EPISODE_MAX_TIME, 12000D});   
+//        plot.addLinePlot("bs1", Color.DARK_GRAY, new double[]{0D, 2000D}, new double[]{EPISODE_MAX_TIME, 2000D});   
+//        plot.addLinePlot("bs2", Color.DARK_GRAY, new double[]{0D, 4000D}, new double[]{EPISODE_MAX_TIME, 4000D});   
+//        plot.addLinePlot("bs3", Color.DARK_GRAY, new double[]{0D, 6000D}, new double[]{EPISODE_MAX_TIME, 6000D});   
+//        plot.addLinePlot("bs4", Color.DARK_GRAY, new double[]{0D, 10000D}, new double[]{EPISODE_MAX_TIME, 10000D});   
+//        plot.addLinePlot("bs5", Color.DARK_GRAY, new double[]{0D, 12000D}, new double[]{EPISODE_MAX_TIME, 12000D});   
         
         // put the PlotPanel in a JFrame, as a JPanel
         JFrame frame = new JFrame("Results");

@@ -24,7 +24,7 @@ import rldevs4j.utils.CollectionsUtils;
  */
 public class Test4 extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 1;        
+    private final int EPISODES = 5;        
     private final double EPISODE_MAX_TIME=3000;    
 
     /**
@@ -73,7 +73,7 @@ public class Test4 extends Experiment{
         frame.setContentPane(plot);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
+    }   
 
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {

@@ -1,7 +1,6 @@
 package rldevs4j.singletrackrailway.entity;
 
 import java.util.Map;
-import java.util.Objects;
 import model.modeling.DevsInterface;
 import model.modeling.content;
 import model.modeling.message;
@@ -20,6 +19,7 @@ public class Train extends ExogenousEventGenerator {
     private final Double speed;   
     private Double direction;   
     private Double position;
+    private TimeTable initialTimeTable;
     private TimeTable timeTable;
     private BlockSectionTreeMap sections;
     private BlockSection currentSection;
@@ -32,20 +32,21 @@ public class Train extends ExogenousEventGenerator {
      * @param name
      * @param maxSpeed: in Km/h
      * @param timeTable 
+     * @param sections 
      */
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections) {
         super(name, null, "passive", DevsInterface.INFINITY);
         this.id = id;
         this.speed = maxSpeed/3.6D; //To meters/s
         this.direction = 1D;     
-        this.timeTable = timeTable.deepCopy();
+        this.initialTimeTable = timeTable.deepCopy();        
         this.sections = sections;  
         initialize();
     }
     
     @Override
     public void initialize() {             
-        this.timeTable.initialize();
+        this.timeTable = initialTimeTable.deepCopy();
         this.position = this.timeTable.getInitPosition();
         this.currentSection = sections.get(this.position);
         this.currentSection.addMe(this);        

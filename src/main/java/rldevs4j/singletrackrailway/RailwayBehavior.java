@@ -23,22 +23,19 @@ import rldevs4j.singletrackrailway.entity.TrainEvent;
  */
 public class RailwayBehavior implements Behavior {
     private final BlockSectionTreeMap sections;
-    private final List<Double> trainsXSection; //Number of trains in each section
-    private final Map<Integer, BlockSection> trainsInSection; //Section where is each train
+    private List<Double> trainsXSection; //Number of trains in each section
+    private Map<Integer, BlockSection> trainsInSection; //Section where is each train
     private Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
     private final List<TimeTable> timeTables; //Last event for each train
-    private final List<Event> actions;
+    private List<Event> actions;
     private final List<Train> trains;
     private Continuous action;
     private Double clock;
+    private final double deadlockPenalty = -10000;
+    private boolean deadlock = false;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables) {
-        this.sections = sections;        
-        this.trainsXSection = new ArrayList<>(sections.size());
-        for(int i=0;i<sections.size();i++)
-            this.trainsXSection.add(0D);
-        this.trainsInSection = new HashMap<>();        
-        this.actions = new ArrayList<>();
+        this.sections = sections;                        
         this.timeTables = timeTables;
         this.trains = trains;
         initialize();
@@ -46,6 +43,17 @@ public class RailwayBehavior implements Behavior {
     
     @Override
     public void initialize(){
+        for(BlockSection bs : sections.values()){
+            if(bs != null)
+                bs.reset();
+        }
+        this.trainsInSection = new HashMap<>();        
+        this.actions = new ArrayList<>();
+        //trainsXSection initialization
+        this.trainsXSection = new ArrayList<>(sections.size());
+        for(int i=0;i<sections.size();i++)
+            this.trainsXSection.add(0D);
+        //train events initialization
         lastTrainEvents = new HashMap<>();
         for(Train t : trains){            
             TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), 0D, 0, false);
@@ -66,7 +74,7 @@ public class RailwayBehavior implements Behavior {
             }        
             trainsInSection.put(tEvent.getId(), bs);           
             trainsXSection.set(bs.getId(), trainsXSection.get(bs.getId()) + 1D);
-            lastTrainEvents.put(e.getId(), tEvent);        
+            lastTrainEvents.put(tEvent.getId(), tEvent);        
         }   
         if(e instanceof Continuous){
             action = (Continuous) e;           
@@ -96,14 +104,29 @@ public class RailwayBehavior implements Behavior {
     @Override
     public float reward() {
         float reward = 0F;
+        int blockedTrains = 0;
         for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArribal()){
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());                
                 reward += tte.getTime() - clock;
                 te.setArribal(false); // to avoid computing reward twise
             }
+            if(!deadlock && trainBlocked(te))
+                blockedTrains++;
         }
+        if(!deadlock && blockedTrains>1){
+            reward += deadlockPenalty;
+            deadlock = true;
+        }            
         return reward;
+    }
+    
+    private boolean trainBlocked(TrainEvent te){        
+        if(te.getSpeed()==0D){
+            BlockSection bs = sections.get(te.getPosition());
+            return !bs.isStation();              
+        }
+        return false;
     }
 
     @Override
