@@ -12,7 +12,7 @@ import rldevs4j.utils.FastByteArrayOutputStream;
  * @author Ezequiel Beccaria
  */
 public class TimeTable implements Serializable{
-    private final List<TimeTableEntry> details;
+    private List<TimeTableEntry> details;
     private Integer currentEntry;
 
     public TimeTable(List<TimeTableEntry> details, Integer currentEntry) {
@@ -47,7 +47,7 @@ public class TimeTable implements Serializable{
     public BlockSection getNextObjSection(){
         for(int i=currentEntry;i<details.size();i++){
             TimeTableEntry tte = details.get(i);
-            if(EntryType.ARRIBAL.equals(tte.getType()))
+            if(EntryType.ARRIVAL.equals(tte.getType()))
                 return tte.getStation();
         }
         return details.get(details.size()-1).getStation();
@@ -56,7 +56,7 @@ public class TimeTable implements Serializable{
     public Double getNextArribalPos(){
         for(int i=currentEntry;i<details.size();i++){
             TimeTableEntry tte = details.get(i);
-            if(EntryType.ARRIBAL.equals(tte.getType()))
+            if(EntryType.ARRIVAL.equals(tte.getType()))
                 return tte.getPosition();
         }
         return details.get(details.size()-1).getPosition();
@@ -106,7 +106,7 @@ public class TimeTable implements Serializable{
     public TimeTableEntry getNextArribalEntry(int id){
         for(int i=id;i<details.size();i++){
             TimeTableEntry tte = details.get(i);
-            if(EntryType.ARRIBAL.equals(tte.getType()))
+            if(EntryType.ARRIVAL.equals(tte.getType()))
                 return tte;
         }
         return null;
@@ -116,5 +116,16 @@ public class TimeTable implements Serializable{
         for(int i=currentEntry;i<details.size();i++){
             details.get(i).updateTime(value);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TT.details: {");
+        for(TimeTableEntry tte : details){
+            sb.append(tte.toString());
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

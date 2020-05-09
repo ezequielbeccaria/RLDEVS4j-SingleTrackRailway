@@ -1,7 +1,6 @@
 package rldevs4j.singletrackrailway;
 
 import facade.DevsSuiteFacade;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -26,13 +25,14 @@ public class Test3 {
     }
 
     public Test3() {
+        double simTime = 3000D;
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
         
-        Environment env = factory.createEnv03(true);
+        Environment env = factory.createEnv03(simTime, true);
         env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         
-        facade.simulateToTime(3000);
+        facade.simulateToTime(simTime);
         
         plotTrace(env.getTrace());
     }

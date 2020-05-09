@@ -18,12 +18,13 @@ public class Test2 {
     }
 
     public Test2() {
+        double simTime = 3000D;
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
-        Environment env = factory.createEnv02();
+        Environment env = factory.createEnv02(simTime);
         env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         
-        facade.simulateToTime(3000);
+        facade.simulateToTime(simTime);
     }
     
 }

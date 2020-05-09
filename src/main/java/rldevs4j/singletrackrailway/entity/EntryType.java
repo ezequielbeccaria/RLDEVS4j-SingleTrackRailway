@@ -7,5 +7,5 @@ import java.io.Serializable;
  * @author Ezequiel Beccaria
  */
 public enum EntryType implements Serializable{
-    DEPARTURE, ARRIBAL
+    DEPARTURE, ARRIVAL
 }

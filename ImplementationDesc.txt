@@ -1,0 +1,5 @@
+Paper original: 
+Cambios con respecto a la implementación del paper original:
+- La unidad de tiempo en la simulación es en segudos.
+- Action space: continuo limitado al rango [0, 5*60].
+- Reward: 

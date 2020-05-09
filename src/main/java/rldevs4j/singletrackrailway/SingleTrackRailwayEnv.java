@@ -6,9 +6,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.StateSpaceInfo;
 import rldevs4j.base.env.gsmdp.StateObserver;
+import rldevs4j.base.env.gsmdp.evgen.FixedTimeExogenousEventGen;
 import rldevs4j.base.env.msg.Event;
+import rldevs4j.base.env.msg.EventType;
 import rldevs4j.base.env.msg.Step;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
+import rldevs4j.singletrackrailway.entity.FinalEvent;
 import rldevs4j.singletrackrailway.entity.TimeTable;
 import rldevs4j.singletrackrailway.entity.Train;
 
@@ -19,17 +22,22 @@ import rldevs4j.singletrackrailway.entity.Train;
 public class SingleTrackRailwayEnv extends Environment{
     private final StateObserver so;
     private final List<Train> trains;
+    private final FixedTimeExogenousEventGen episodeFinishEventGen;
     
-    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, boolean debug) {
+    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean debug) {
         super(name);
-        List<TimeTable> tTables = new ArrayList<>();        
+        List<TimeTable> tTables = new ArrayList<>();       
+        for(Train t : trains)
+            tTables.add(t.getTimeTable().deepCopy());
         RailwayBehavior rb = new RailwayBehavior(sections, trains, tTables);
         so = new StateObserver(rb, debug);
+        episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime});
         this.trains = trains;
         
-        add(so);               
-        for(Train t : trains){
-            tTables.add(t.getTimeTable().deepCopy());
+        add(so);        
+        add(episodeFinishEventGen); //This generator is responsible for sending an event at the end of the simulation.
+        addCoupling(episodeFinishEventGen, "out", so, "event");
+        for(Train t : trains){            
             add(t);
             addCoupling(t, "out", so, "event");
             addCoupling(so, "event_genearator", t, "in");

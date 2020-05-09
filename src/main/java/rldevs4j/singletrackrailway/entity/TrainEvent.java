@@ -39,7 +39,7 @@ public class TrainEvent extends Event{
         return phase;
     }
 
-    public boolean isArribal() {
+    public boolean isArrival() {
         return arribal;
     }
 

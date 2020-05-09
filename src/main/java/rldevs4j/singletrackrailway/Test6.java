@@ -1,7 +1,6 @@
 package rldevs4j.singletrackrailway;
 
 import facade.DevsSuiteFacade;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -17,7 +16,7 @@ import rldevs4j.utils.CollectionsUtils;
  * @author Ezequiel Beccaria
  */
 public class Test6 {
-
+    private final double EPISODE_MAX_TIME=3000;     
     /**
      * @param args the command line arguments
      */
@@ -26,9 +25,10 @@ public class Test6 {
     }
 
     public Test6() {
+        
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
         
-        Environment env = factory.createSimpleThreeStopsRailway(true);
+        Environment env = factory.createSimpleThreeStopsRailway(EPISODE_MAX_TIME, true);
         env.initialize(); //initialize model state
         DevsSuiteFacade facade = new DevsSuiteFacade(env);
         

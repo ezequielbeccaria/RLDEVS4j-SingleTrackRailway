@@ -25,6 +25,7 @@ public class Train extends ExogenousEventGenerator {
     private BlockSection currentSection;
     private BlockSection objetiveSection;   
     private final Double activeSigma = 1D;
+    private boolean debug;
     
     /**
      * 
@@ -35,12 +36,13 @@ public class Train extends ExogenousEventGenerator {
      * @param sections 
      */
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections) {
-        super(name, null, "passive", DevsInterface.INFINITY);
+        super(name, null, "passive", DevsInterface.INFINITY);     
         this.id = id;
         this.speed = maxSpeed/3.6D; //To meters/s
         this.direction = 1D;     
         this.initialTimeTable = timeTable.deepCopy();        
         this.sections = sections;  
+        this.debug = false;
         initialize();
     }
     
@@ -59,7 +61,7 @@ public class Train extends ExogenousEventGenerator {
         
         Double tL = currentGlobalTime();
         double diff =  DoubleUtils.round(nDepTime - tL, 2);    
-        return diff > 1D ? diff : 1D; //At least 1 minute for passenger boarding
+        return diff >= 60D ? diff : 60D; //At least 1 minute for passenger boarding
     }
     
     private Double currentGlobalTime(){
@@ -156,15 +158,14 @@ public class Train extends ExogenousEventGenerator {
             if (messageOnPort(x, "in", i)) {       
                 Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
                 if(content != null){
-                    this.updateTimeTable(content.get("update"));                    
+                    this.updateTimeTable(content.get("update"));     
+                    if(phaseIs("passive")){
+                        holdIn("passive", getNextDepartureTime());
+                    }    
                 }    
             }     
         }      
-        if(phaseIs("passive")){
-            holdIn("passive", getNextDepartureTime());
-        }else{
-            Continue(e);
-        }
+        Continue(e);
     }
 
     @Override
@@ -190,6 +191,9 @@ public class Train extends ExogenousEventGenerator {
     
     public void updateTimeTable(double value){
         this.timeTable.updateTimes(value);
+        if(debug){            
+            System.out.println(timeTable.toString());
+        }
     }
     
     public boolean arribal(){

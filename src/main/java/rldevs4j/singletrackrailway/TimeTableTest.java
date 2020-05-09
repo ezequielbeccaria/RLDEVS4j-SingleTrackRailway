@@ -39,13 +39,13 @@ public class TimeTableTest {
         Station s3 = new Station(9, 14000D, 14000D, 3, false, true);
         //TimeTable Setup
         TimeTableEntry tte01 = new TimeTableEntry(10D, EntryType.DEPARTURE, s1);
-        TimeTableEntry tte02 = new TimeTableEntry(16D, EntryType.ARRIBAL, s2);
+        TimeTableEntry tte02 = new TimeTableEntry(16D, EntryType.ARRIVAL, s2);
         TimeTableEntry tte03 = new TimeTableEntry(20D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte04 = new TimeTableEntry(26D, EntryType.ARRIBAL, s3);
+        TimeTableEntry tte04 = new TimeTableEntry(26D, EntryType.ARRIVAL, s3);
         TimeTableEntry tte05 = new TimeTableEntry(30D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte06 = new TimeTableEntry(36D, EntryType.ARRIBAL, s2);
+        TimeTableEntry tte06 = new TimeTableEntry(36D, EntryType.ARRIVAL, s2);
         TimeTableEntry tte07 = new TimeTableEntry(40D, EntryType.DEPARTURE, s2); //TODO chequera pq sale antes de t=40
-        TimeTableEntry tte08 = new TimeTableEntry(44D, EntryType.ARRIBAL, s1);
+        TimeTableEntry tte08 = new TimeTableEntry(44D, EntryType.ARRIVAL, s1);
         
         List<TimeTableEntry> timeTable0Entries = new ArrayList<>();
         timeTable0Entries.add(tte01);

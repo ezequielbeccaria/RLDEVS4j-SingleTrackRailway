@@ -42,4 +42,10 @@ public class TimeTableEntry implements Serializable{
     public BlockSection getStation() {
         return station;
     }
+
+    @Override
+    public String toString() {
+        return "{time:"+time+" , type:"+type+"}";
+    }
+    
 }

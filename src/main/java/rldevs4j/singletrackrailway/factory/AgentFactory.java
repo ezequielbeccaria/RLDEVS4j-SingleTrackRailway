@@ -5,7 +5,7 @@ import rldevs4j.base.agent.Agent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.agents.dummy.DummyAgent;
-import rldevs4j.agents.ppo.Actor;
+import rldevs4j.agents.ppo.ContinuousActionActor;
 import rldevs4j.agents.ppo.Critic;
 import rldevs4j.agents.ppo.ProximalPolicyOptimization;
 
@@ -25,7 +25,7 @@ public class AgentFactory {
         
         assert minFeatureValues.length == maxFeatureValues.length;
         
-        Actor actor = new Actor(params);
+        ContinuousActionActor actor = new ContinuousActionActor(params);
         Critic critic = new Critic(params);
         return new ProximalPolicyOptimization("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), actor, critic, params);
     }

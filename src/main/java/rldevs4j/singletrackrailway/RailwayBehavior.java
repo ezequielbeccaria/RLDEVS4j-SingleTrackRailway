@@ -1,6 +1,7 @@
 package rldevs4j.singletrackrailway;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,8 @@ import rldevs4j.base.env.msg.Continuous;
 import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
+import rldevs4j.singletrackrailway.entity.EntryType;
+import rldevs4j.singletrackrailway.entity.FinalEvent;
 import rldevs4j.singletrackrailway.entity.TimeTable;
 import rldevs4j.singletrackrailway.entity.TimeTableEntry;
 import rldevs4j.singletrackrailway.entity.Train;
@@ -31,8 +34,10 @@ public class RailwayBehavior implements Behavior {
     private final List<Train> trains;
     private Continuous action;
     private Double clock;
-    private final double deadlockPenalty = -10000;
-    private boolean deadlock = false;
+    //every time an arrival happens, the value for the arrival delay is updated
+    private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
+    private int[] trainsArrivalCount;
+    private boolean finalEvent;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables) {
         this.sections = sections;                        
@@ -55,15 +60,28 @@ public class RailwayBehavior implements Behavior {
             this.trainsXSection.add(0D);
         //train events initialization
         lastTrainEvents = new HashMap<>();
+        trainsArribals = new HashMap<>();
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "Initial", t.getPosition(), 0D, 0, false);
+            TrainEvent te = new TrainEvent(t.getId(), "initial", t.getPosition(), 0D, 0, false);
             lastTrainEvents.put(t.getId(), te);
-            this.trasition(null, te);
+            this.trasition(te, 0D);
+            //Trains arribals 
+            TimeTable tt = timeTables.get(t.getId());
+            List<Float> arribalTimes = new ArrayList<>();
+            for(TimeTableEntry tte : tt.getDetails()){
+                if(EntryType.ARRIVAL.equals(tte.getType())){
+                    arribalTimes.add(-10000F); //Max defaul delay value 
+                }
+            }
+            trainsArribals.put(t.getId(), arribalTimes);
         }
+        trainsArrivalCount = new int[trains.size()];
+        Arrays.fill(trainsArrivalCount, 0);
+        finalEvent = false;
     }
 
     @Override
-    public void trasition(INDArray state, Event e) {
+    public void trasition(Event e, double time) {
         if(e instanceof TrainEvent){
             TrainEvent tEvent = (TrainEvent) e;
             //Get trains current blocksection based on train position
@@ -79,7 +97,11 @@ public class RailwayBehavior implements Behavior {
         if(e instanceof Continuous){
             action = (Continuous) e;           
         }
-        clock = state!=null?state.getDouble(state.columns()-1):0D;
+        if(e instanceof FinalEvent){
+            finalEvent = true;         
+        }        
+        if(clock == null || time > clock)
+            clock = time;
     }
 
     @Override
@@ -102,31 +124,28 @@ public class RailwayBehavior implements Behavior {
     }
 
     @Override
-    public float reward() {
-        float reward = 0F;
-        int blockedTrains = 0;
+    /**
+     * The reward is emited only at the end of the training episode.
+     */
+    public float reward() {        
         for(TrainEvent te : lastTrainEvents.values()){
-            if(te.isArribal()){
-                TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());                
-                reward += tte.getTime() - clock;
-                te.setArribal(false); // to avoid computing reward twise
+            if(te.isArrival()){
+                trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
+                TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());       
+                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
             }
-            if(!deadlock && trainBlocked(te))
-                blockedTrains++;
-        }
-        if(!deadlock && blockedTrains>1){
-            reward += deadlockPenalty;
-            deadlock = true;
-        }            
-        return reward;
+        } 
+        return finalEvent?calcFinalReward():0F;
     }
     
-    private boolean trainBlocked(TrainEvent te){        
-        if(te.getSpeed()==0D){
-            BlockSection bs = sections.get(te.getPosition());
-            return !bs.isStation();              
+    private float calcFinalReward(){
+        float reward = 0F;
+        for(List<Float> l : trainsArribals.values()){
+            for(Float r : l){
+                reward += r;
+            }
         }
-        return false;
+        return reward;
     }
 
     @Override
@@ -140,22 +159,45 @@ public class RailwayBehavior implements Behavior {
     }
 
     @Override
-    public ExogenousEventActivation activeEvents() {
-        Map<String,Map<String,Double>> content = new HashMap<>();       
+    public ExogenousEventActivation activeEvents() {          
         if(action != null){
+            Map<String,Map<String,Double>> content = new HashMap<>();     
             for(int i=0;i<lastTrainEvents.size();i++){
                 Map<String,Double> c = new HashMap<>();   
                 c.put("update", action.getValue()[i]);                
                 content.put(lastTrainEvents.get(i).getName(), c);
             }    
-        }
-        ExogenousEventActivation eea = new ExogenousEventActivation(content);
-        action = null;
-        return eea;
+            ExogenousEventActivation eea = new ExogenousEventActivation(content);        
+            return eea;
+        }         
+        return null;
     }
 
     @Override
     public List<Event> getAllActios() {
         return actions;
+    }
+
+    @Override
+    public boolean notifyAgent() {        
+        if(finalEvent){ //the last event generates the reward 
+            finalEvent = false;
+            return true;
+        } 
+        
+        if(action != null){ //the last event was an action
+            action = null;
+            return false;
+        }
+        
+        //if some of the last events was a train arrival
+        for(TrainEvent te : lastTrainEvents.values()){ 
+            if(te.isArrival()) {
+                te.setArribal(false); // to avoid computing reward twise
+                return true;
+            }    
+        }
+        
+        return false; //do not notify the agent
     }
 }
