@@ -52,7 +52,7 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams.put("ACTION_DIM", 2);
         this.agentParams.put("LEARNING_RATE", 1e-4);
         this.agentParams.put("HIDDEN_SIZE", 128);
-        this.agentParams.put("TAHN_ACTION_LIMIT", 20D);
+        this.agentParams.put("TAHN_ACTION_LIMIT", 30D*60D); //Max action 30 min
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
         this.agentParams.put("LAMBDA_GAE", 0.96);
@@ -110,39 +110,6 @@ public class Env3PPOTrain extends Experiment{
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void plotTrace(List<Step> trace){
-        // create your PlotPanel (you can use it as a JPanel)
-        Plot2DPanel plot = new Plot2DPanel();
-        
-        List<Double> time = new ArrayList<>();
-        List<Double> t0pos = new ArrayList<>();
-        List<Double> t1pos = new ArrayList<>();
-        
-        for(int i=0;i<trace.size();i++){
-            Step step = trace.get(i);
-            INDArray obs = step.getObservation();
-            time.add(obs.getDouble(obs.length()-1));
-            t0pos.add(obs.getDouble(0));
-            t1pos.add(obs.getDouble(2));            
-        }
-        
-        // add a line plot to the PlotPanel                
-        plot.addLinePlot("Train0", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t0pos));   
-        plot.addLinePlot("Train1", CollectionsUtils.DoubleToArray(time), CollectionsUtils.DoubleToArray(t1pos));   
-//        plot.addLinePlot("bs1", Color.DARK_GRAY, new double[]{0D, 2000D}, new double[]{EPISODE_MAX_TIME, 2000D});   
-//        plot.addLinePlot("bs2", Color.DARK_GRAY, new double[]{0D, 4000D}, new double[]{EPISODE_MAX_TIME, 4000D});   
-//        plot.addLinePlot("bs3", Color.DARK_GRAY, new double[]{0D, 6000D}, new double[]{EPISODE_MAX_TIME, 6000D});   
-//        plot.addLinePlot("bs4", Color.DARK_GRAY, new double[]{0D, 10000D}, new double[]{EPISODE_MAX_TIME, 10000D});   
-//        plot.addLinePlot("bs5", Color.DARK_GRAY, new double[]{0D, 12000D}, new double[]{EPISODE_MAX_TIME, 12000D});   
-        
-        // put the PlotPanel in a JFrame, as a JPanel
-        JFrame frame = new JFrame("Results");
-        frame.setSize(600, 600);
-        frame.setContentPane(plot);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     @Override

@@ -34,6 +34,8 @@ public class RailwayBehavior implements Behavior {
     private final List<Train> trains;
     private Continuous action;
     private Double clock;
+    private Double nextNotifTime;
+    private Double notifInterval = 60D;
     //every time an arrival happens, the value for the arrival delay is updated
     private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
     private int[] trainsArrivalCount;
@@ -78,6 +80,7 @@ public class RailwayBehavior implements Behavior {
         trainsArrivalCount = new int[trains.size()];
         Arrays.fill(trainsArrivalCount, 0);
         finalEvent = false;
+        nextNotifTime = 0D;
     }
 
     @Override
@@ -129,11 +132,11 @@ public class RailwayBehavior implements Behavior {
      */
     public float reward() {        
         for(TrainEvent te : lastTrainEvents.values()){
-            if(te.isArrival()){
-                te.setArribal(false); //To avoid double counting
+            if(te.isArrival() && !te.isComputed()){
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());       
                 trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
+                te.computed();
             }
         } 
         return finalEvent?calcFinalReward():0F;
@@ -151,7 +154,7 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public boolean done() {
-        return false;
+        return finalEvent;
     }
 
     @Override
@@ -182,7 +185,6 @@ public class RailwayBehavior implements Behavior {
     @Override
     public boolean notifyAgent() {        
         if(finalEvent){ //the last event generates the reward 
-            finalEvent = false;
             return true;
         } 
         
@@ -198,7 +200,12 @@ public class RailwayBehavior implements Behavior {
                 return true;
             }    
         }
-        
+
+        if(clock >= nextNotifTime) {
+            nextNotifTime = clock + notifInterval;
+            return true;
+        }
+
         return false; //do not notify the agent
     }
 }

@@ -113,9 +113,7 @@ public class TimeTable implements Serializable{
     }
     
     public void updateTimes(double value){
-        for(int i=currentEntry;i<details.size();i++){
-            details.get(i).updateTime(value);
-        }
+        details.get(currentEntry).updateTime(value);
     }
 
     @Override
