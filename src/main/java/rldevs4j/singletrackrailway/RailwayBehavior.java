@@ -130,6 +130,7 @@ public class RailwayBehavior implements Behavior {
     public float reward() {        
         for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArrival()){
+                te.setArribal(false); //To avoid double counting
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());       
                 trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
