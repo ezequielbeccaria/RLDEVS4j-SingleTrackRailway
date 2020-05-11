@@ -38,7 +38,7 @@ public class Train extends ExogenousEventGenerator {
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections) {
         super(name, null, "passive", DevsInterface.INFINITY);     
         this.id = id;
-        this.speed = maxSpeed/3.6D; //To meters/s
+        this.speed = Math.floor(maxSpeed/3.6D); //To meters/s
         this.direction = 1D;     
         this.initialTimeTable = timeTable.deepCopy();        
         this.sections = sections;  
@@ -75,7 +75,7 @@ public class Train extends ExogenousEventGenerator {
     }   
     
     private Double nextPos(double cpos, double speed, double t){
-        return Math.floor(cpos + speed*t);
+        return cpos + speed*t;
     }
     
     @Override
@@ -161,11 +161,12 @@ public class Train extends ExogenousEventGenerator {
                     this.updateTimeTable(content.get("update"));     
                     if(phaseIs("passive")){
                         holdIn("passive", getNextDepartureTime());
-                    }    
+                    } else {
+                        Continue(e);
+                    }
                 }    
-            }     
-        }      
-        Continue(e);
+            }
+        }
     }
 
     @Override
