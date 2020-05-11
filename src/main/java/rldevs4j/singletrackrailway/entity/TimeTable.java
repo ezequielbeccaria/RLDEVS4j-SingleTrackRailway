@@ -112,8 +112,16 @@ public class TimeTable implements Serializable{
         return null;
     }
     
-    public void updateTimes(double value){
-        details.get(currentEntry).updateTime(value);
+    public void updateTimes(double value, String currentPhase){
+        if("passive".equals(currentPhase))
+            details.get(currentEntry).updateTime(value);
+        else{
+            try {
+                details.get(currentEntry+2).updateTime(value);
+            } catch (IndexOutOfBoundsException e){
+                System.out.println("ACTION: Can not update departure time");
+            }
+        }
     }
 
     @Override

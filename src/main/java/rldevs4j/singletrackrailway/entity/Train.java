@@ -191,7 +191,7 @@ public class Train extends ExogenousEventGenerator {
     }    
     
     public void updateTimeTable(double value){
-        this.timeTable.updateTimes(value);
+        this.timeTable.updateTimes(value, phase);
         if(debug){            
             System.out.println(timeTable.toString());
         }

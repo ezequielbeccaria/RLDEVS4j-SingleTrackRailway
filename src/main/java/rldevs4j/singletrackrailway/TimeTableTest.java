@@ -61,7 +61,7 @@ public class TimeTableTest {
         
         TimeTable tt2 = tt1.deepCopy();
         
-        tt2.updateTimes(5);
+        tt2.updateTimes(5, "passive");
         
         System.out.println(tt1);
         System.out.println(tt2);
