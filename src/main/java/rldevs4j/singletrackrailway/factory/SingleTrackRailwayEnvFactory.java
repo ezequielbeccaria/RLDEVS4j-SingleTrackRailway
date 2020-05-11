@@ -120,16 +120,19 @@ public class SingleTrackRailwayEnvFactory {
         bstm.put(bs22);
         bstm.put(bs23);
         bstm.put(s3);
-        
+
+        double t0Delay = 0;
+        double t1Delay = 500;
+
         //Train0 Setup
-        TimeTableEntry tte01 = new TimeTableEntry(800D, EntryType.DEPARTURE, s1);
-        TimeTableEntry tte02 = new TimeTableEntry(1250D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte03 = new TimeTableEntry(1400D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte04 = new TimeTableEntry(1700D, EntryType.ARRIVAL, s3);
-        TimeTableEntry tte05 = new TimeTableEntry(2000D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte06 = new TimeTableEntry(2300D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte07 = new TimeTableEntry(2400D, EntryType.DEPARTURE, s2); //TODO chequera pq sale antes de t=40
-        TimeTableEntry tte08 = new TimeTableEntry(2800D, EntryType.ARRIVAL, s1);
+        TimeTableEntry tte01 = new TimeTableEntry(10D+t0Delay, EntryType.DEPARTURE, s1);
+        TimeTableEntry tte02 = new TimeTableEntry(450D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte03 = new TimeTableEntry(600D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte04 = new TimeTableEntry(900D, EntryType.ARRIVAL, s3);
+        TimeTableEntry tte05 = new TimeTableEntry(1200D, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte06 = new TimeTableEntry(1500D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte07 = new TimeTableEntry(1600D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte08 = new TimeTableEntry(2000D, EntryType.ARRIVAL, s1);
         
         List<TimeTableEntry> timeTable0Entries = new ArrayList<>();
         timeTable0Entries.add(tte01);
@@ -145,14 +148,14 @@ public class SingleTrackRailwayEnvFactory {
         Train train0 = new Train(0, "train0", 70D, timeTable0, bstm);
         
         //Train1 Setup
-        TimeTableEntry tte11 = new TimeTableEntry(480D, EntryType.DEPARTURE, s1);
-        TimeTableEntry tte12 = new TimeTableEntry(850D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte13 = new TimeTableEntry(1100D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte14 = new TimeTableEntry(1400D, EntryType.ARRIVAL, s3);
-        TimeTableEntry tte15 = new TimeTableEntry(1900D, EntryType.DEPARTURE, s3);
-        TimeTableEntry tte16 = new TimeTableEntry(2200D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte17 = new TimeTableEntry(2500D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte18 = new TimeTableEntry(2600D, EntryType.ARRIVAL, s1);
+        TimeTableEntry tte11 = new TimeTableEntry(10D+t1Delay, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte12 = new TimeTableEntry(400D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte13 = new TimeTableEntry(500D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte14 = new TimeTableEntry(800D, EntryType.ARRIVAL, s1);
+        TimeTableEntry tte15 = new TimeTableEntry(1100D, EntryType.DEPARTURE, s1);
+        TimeTableEntry tte16 = new TimeTableEntry(1400D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte17 = new TimeTableEntry(1650D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte18 = new TimeTableEntry(2000D, EntryType.ARRIVAL, s3);
         
         List<TimeTableEntry> timeTable1Entries = new ArrayList<>();
         timeTable1Entries.add(tte11);
