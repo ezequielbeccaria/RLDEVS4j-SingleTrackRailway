@@ -1,6 +1,9 @@
 package rldevs4j.singletrackrailway;
 
 import facade.DevsSuiteFacade;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,7 @@ import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.singletrackrailway.factory.AgentFactory;
 import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
+import rldevs4j.utils.CSVUtils;
 import rldevs4j.utils.CollectionsUtils;
 
 /**
@@ -37,7 +41,7 @@ public class Env3PPOTrain extends Experiment{
         Experiment exp = new Env3PPOTrain();
         exp.run();
         
-        System.exit(0);
+//        System.exit(0);
     }
 
     public Env3PPOTrain() {
@@ -59,7 +63,55 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams.put("ENTROPY_COEF", 0.02);
         this.agentParams.put("DEBUG", false);
     }
-    
+
+    private void storeTrace(List<Step> trace){
+        FileWriter writer;
+        try {
+            String filename = resultsFilePath+String.valueOf(id)+"-"+name+"-trace";
+            writer = new FileWriter(filename);
+            //write headers
+            List<String> headers = new ArrayList<>();
+            headers.add("train0-pos");
+            headers.add("train0-speed");
+            headers.add("train1-pos");
+            headers.add("train1-speed");
+            headers.add("bs0-occupation-s0");
+            headers.add("bs1-occupation");
+            headers.add("bs2-occupation");
+            headers.add("bs3-occupation");
+            headers.add("bs4-occupation");
+            headers.add("bs5-occupation-s1");
+            headers.add("bs6-occupation");
+            headers.add("bs7-occupation");
+            headers.add("bs8-occupation");
+            headers.add("bs9-occupation-s2");
+            headers.add("bs0-available-s0");
+            headers.add("bs1-available");
+            headers.add("bs2-available");
+            headers.add("bs3-available");
+            headers.add("bs4-available");
+            headers.add("bs5-available-s1");
+            headers.add("bs6-available");
+            headers.add("bs7-available");
+            headers.add("bs8-available");
+            headers.add("bs9-available-s2");
+            headers.add("time");
+            CSVUtils.writeLine(writer, headers, '|');
+            //write data
+            for(int j=0;j<trace.size();j++){
+                Step step = trace.get(j);
+                List<String> line = new ArrayList<>();
+                for(int i=0;i<step.observationSize();i++)
+                    line.add(formatter.format(step.getFeature(i))); // feature i
+                CSVUtils.writeLine(writer, line, '|');
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void plotTrace(List<Step> trace){
         // create your PlotPanel (you can use it as a JPanel)
         Plot2DPanel plot = new Plot2DPanel();
