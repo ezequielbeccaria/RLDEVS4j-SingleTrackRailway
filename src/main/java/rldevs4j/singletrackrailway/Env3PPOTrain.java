@@ -30,8 +30,8 @@ import rldevs4j.utils.CollectionsUtils;
  */
 public class Env3PPOTrain extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 2000;        
-    private final double EPISODE_MAX_TIME=3000;    
+    private final int EPISODES = 10000;
+    private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
 
     /**
@@ -45,12 +45,12 @@ public class Env3PPOTrain extends Experiment{
     }
 
     public Env3PPOTrain() {
-        super(0, "Env3PPOTrain", 1, false, true, "/home/ezequiel/experiments/", null);
+        super(0, "Env3PPOTrain", 1, false, true, "/home/ezequiel/experiments/SingleTrackRailway/", null);
         this.facade = new DevsSuiteFacade();                
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 25);
         this.agentParams.put("ACTION_DIM", 2);
-        this.agentParams.put("LEARNING_RATE", 1e-4);
+        this.agentParams.put("LEARNING_RATE", 1e-3);
         this.agentParams.put("HIDDEN_SIZE", 128);
         this.agentParams.put("TAHN_ACTION_LIMIT", 30D*60D); //Max action 30 min
         this.agentParams.put("L2", 1e-3);
@@ -62,54 +62,6 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("ENTROPY_COEF", 0.02);
         this.agentParams.put("DEBUG", false);
-    }
-
-    private void storeTrace(List<Step> trace){
-        FileWriter writer;
-        try {
-            String filename = resultsFilePath+String.valueOf(id)+"-"+name+"-trace";
-            writer = new FileWriter(filename);
-            //write headers
-            List<String> headers = new ArrayList<>();
-            headers.add("train0-pos");
-            headers.add("train0-speed");
-            headers.add("train1-pos");
-            headers.add("train1-speed");
-            headers.add("bs0-occupation-s0");
-            headers.add("bs1-occupation");
-            headers.add("bs2-occupation");
-            headers.add("bs3-occupation");
-            headers.add("bs4-occupation");
-            headers.add("bs5-occupation-s1");
-            headers.add("bs6-occupation");
-            headers.add("bs7-occupation");
-            headers.add("bs8-occupation");
-            headers.add("bs9-occupation-s2");
-            headers.add("bs0-available-s0");
-            headers.add("bs1-available");
-            headers.add("bs2-available");
-            headers.add("bs3-available");
-            headers.add("bs4-available");
-            headers.add("bs5-available-s1");
-            headers.add("bs6-available");
-            headers.add("bs7-available");
-            headers.add("bs8-available");
-            headers.add("bs9-available-s2");
-            headers.add("time");
-            CSVUtils.writeLine(writer, headers, '|');
-            //write data
-            for(int j=0;j<trace.size();j++){
-                Step step = trace.get(j);
-                List<String> line = new ArrayList<>();
-                for(int i=0;i<step.observationSize();i++)
-                    line.add(formatter.format(step.getFeature(i))); // feature i
-                CSVUtils.writeLine(writer, line, '|');
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
     }
 
     @Override

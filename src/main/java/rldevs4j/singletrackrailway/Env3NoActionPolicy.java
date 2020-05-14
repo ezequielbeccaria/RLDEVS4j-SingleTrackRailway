@@ -42,7 +42,7 @@ public class Env3NoActionPolicy extends Experiment{
     }
 
     public Env3NoActionPolicy() {
-        super(0, "Env3NoActionPolicy", 1, false, false, "/home/ezequiel/experiments/SingleTrackRailway/", null);
+        super(0, "Env3NoActionPolicy", 1, false, false, "/home/ezequiel/experiments/SingleTrackRailwayEnv3/", null);
         this.facade = new DevsSuiteFacade();        
     }
 

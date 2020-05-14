@@ -30,12 +30,11 @@ public class RailwayBehavior implements Behavior {
     private Map<Integer, BlockSection> trainsInSection; //Section where is each train
     private Map<Integer, TrainEvent> lastTrainEvents; //Last event for each train
     private final List<TimeTable> timeTables; //Last event for each train
-    private List<Event> actions;
     private final List<Train> trains;
     private Continuous action;
     private Double clock;
     private Double nextNotifTime;
-    private Double notifInterval = 60D;
+    private Double notifInterval = 20D;
     //every time an arrival happens, the value for the arrival delay is updated
     private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
     private int[] trainsArrivalCount;
@@ -55,7 +54,6 @@ public class RailwayBehavior implements Behavior {
                 bs.reset();
         }
         this.trainsInSection = new HashMap<>();        
-        this.actions = new ArrayList<>();
         //trainsXSection initialization
         this.trainsXSection = new ArrayList<>(sections.size());
         for(int i=0;i<sections.size();i++)
@@ -159,7 +157,7 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public List<Event> enabledActions() {
-        return actions;
+        return null;
     }
 
     @Override
@@ -179,7 +177,7 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public List<Event> getAllActios() {
-        return actions;
+        return null;
     }
 
     @Override

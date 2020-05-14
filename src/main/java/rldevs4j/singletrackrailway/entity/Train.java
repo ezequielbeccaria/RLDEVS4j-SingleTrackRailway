@@ -158,10 +158,13 @@ public class Train extends ExogenousEventGenerator {
             if (messageOnPort(x, "in", i)) {       
                 Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
                 if(content != null){
-                    this.updateTimeTable(content.get("update"));     
-                    if(phaseIs("passive")){
-                        holdIn("passive", getNextDepartureTime());
-                    } else {
+                    double value = content.get("update");
+                    if(value>0){
+                        this.updateTimeTable(value);
+                        if(phaseIs("passive")){
+                            holdIn("passive", getNextDepartureTime());
+                        }
+                    }else{
                         Continue(e);
                     }
                 }    
