@@ -79,6 +79,7 @@ public class RailwayBehavior implements Behavior {
         Arrays.fill(trainsArrivalCount, 0);
         finalEvent = false;
         nextNotifTime = 0D;
+        clock = 0D;
     }
 
     @Override

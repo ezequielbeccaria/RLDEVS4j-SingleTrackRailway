@@ -45,7 +45,7 @@ public class Env3PPOTrain extends Experiment{
     }
 
     public Env3PPOTrain() {
-        super(0, "Env3PPOTrain", 1, false, true, "/home/ezequiel/experiments/SingleTrackRailway/", null);
+        super(0, "Env3PPOTrain", 1, false, true, "/home/ezequiel/experiments/SingleTrackRailwayEnv3/", null);
         this.facade = new DevsSuiteFacade();                
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 25);
@@ -58,7 +58,7 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams.put("LAMBDA_GAE", 0.96);
         this.agentParams.put("EPSILON_CLIP", 0.2);
         this.agentParams.put("TARGET_KL", 0.02);
-        this.agentParams.put("EPOCHS", 3);
+        this.agentParams.put("EPOCHS", 10);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("ENTROPY_COEF", 0.02);
         this.agentParams.put("DEBUG", false);

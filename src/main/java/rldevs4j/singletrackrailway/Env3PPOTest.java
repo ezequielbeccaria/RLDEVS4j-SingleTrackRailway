@@ -42,7 +42,7 @@ public class Env3PPOTest extends Experiment{
     }
 
     public Env3PPOTest() {
-        super(0, "Env3PPOTest", 1, false, false, "/home/ezequiel/experiments/SingleTrackRailway/", null);
+        super(0, "Env3PPOTest", 1, false, false, "/home/ezequiel/experiments/SingleTrackRailwayEnv3/", null);
         this.facade = new DevsSuiteFacade();                
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 25);

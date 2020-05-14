@@ -28,7 +28,7 @@ import rldevs4j.utils.CollectionsUtils;
  */
 public class Env3NoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 1;        
+    private final int EPISODES = 10;
     private final double EPISODE_MAX_TIME=3000;    
 
     /**
@@ -52,7 +52,7 @@ public class Env3NoActionPolicy extends Experiment{
         
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();
         
-        Environment env = factory.createEnv03(EPISODE_MAX_TIME, true);
+        Environment env = factory.createEnv03(EPISODE_MAX_TIME, false);
         env.initialize(); //initialize model state
         
         DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing());
