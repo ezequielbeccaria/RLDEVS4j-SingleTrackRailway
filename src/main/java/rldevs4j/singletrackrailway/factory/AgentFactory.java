@@ -3,14 +3,11 @@ package rldevs4j.singletrackrailway.factory;
 import java.io.IOException;
 import java.util.Map;
 
-import rldevs4j.agents.ppo.ContinuousActionActorTest;
+import rldevs4j.agents.ppo.*;
 import rldevs4j.base.agent.Agent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.agents.dummy.DummyAgent;
-import rldevs4j.agents.ppo.ContinuousActionActor;
-import rldevs4j.agents.ppo.Critic;
-import rldevs4j.agents.ppo.ProximalPolicyOptimization;
 
 /**
  *
@@ -26,8 +23,8 @@ public class AgentFactory {
 
 
     public static Agent ppo(Map<String,Object> params){
-        
-        ContinuousActionActor actor = new ContinuousActionActor(params);
+
+        Actor actor = new ContinuousActionActorFixedStd(params);
         Critic critic = new Critic(params);
         return new ProximalPolicyOptimization("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), actor, critic, params);
     }

@@ -136,7 +136,7 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public message out() {
         message m = new message();    
-        if(!phaseIs("initial") && sigma > 0){
+        if(phaseIs("initial") || sigma > 0){
             content con = makeContent(
             "out", 
             new TrainEvent(

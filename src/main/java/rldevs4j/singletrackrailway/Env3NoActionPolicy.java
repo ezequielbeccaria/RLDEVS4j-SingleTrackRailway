@@ -43,7 +43,6 @@ public class Env3NoActionPolicy extends Experiment{
 
     public Env3NoActionPolicy() {
         super(0, "Env3NoActionPolicy", 1, false, false, "/home/ezequiel/experiments/SingleTrackRailwayEnv3/", null);
-        this.facade = new DevsSuiteFacade();        
     }
 
     @Override
@@ -59,12 +58,11 @@ public class Env3NoActionPolicy extends Experiment{
         
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
         
-        facade = new DevsSuiteFacade(rlEnv);      
-        
         logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
         
         for(int i=1;i<=EPISODES;i++){        
             //Inititalize environment and simulator
+            facade = new DevsSuiteFacade(rlEnv);
             facade.reset();
             //Episode time start
             long initTime = System.currentTimeMillis();

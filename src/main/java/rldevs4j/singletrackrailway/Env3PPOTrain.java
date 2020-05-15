@@ -1,28 +1,21 @@
 package rldevs4j.singletrackrailway;
 
 import facade.DevsSuiteFacade;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import javax.swing.JFrame;
-import org.math.plot.Plot2DPanel;
-import org.nd4j.linalg.api.ndarray.INDArray;
+import org.deeplearning4j.api.storage.StatsStorage;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.base.agent.Agent;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.RLEnvironment;
-import rldevs4j.base.env.msg.Step;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.singletrackrailway.factory.AgentFactory;
 import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
-import rldevs4j.utils.CSVUtils;
-import rldevs4j.utils.CollectionsUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  *
@@ -30,9 +23,10 @@ import rldevs4j.utils.CollectionsUtils;
  */
 public class Env3PPOTrain extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 10000;
+    private final int EPISODES = 100000;
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
+    protected UIServer uiServer;
 
     /**
      * @param args the command line arguments
@@ -50,7 +44,7 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 25);
         this.agentParams.put("ACTION_DIM", 2);
-        this.agentParams.put("LEARNING_RATE", 1e-3);
+        this.agentParams.put("LEARNING_RATE", 1e-4);
         this.agentParams.put("HIDDEN_SIZE", 128);
         this.agentParams.put("TAHN_ACTION_LIMIT", 30D*60D); //Max action 30 min
         this.agentParams.put("L2", 1e-3);
@@ -62,10 +56,19 @@ public class Env3PPOTrain extends Experiment{
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("ENTROPY_COEF", 0.02);
         this.agentParams.put("DEBUG", false);
+
+        //Initialize the user interface backend
+        uiServer = UIServer.getInstance();
+        //Configure where the network information (gradients, score vs. time etc) is to be stored. Here: store in memory.
+        StatsStorage statsStorage = new InMemoryStatsStorage();         //Alternative: new FileStatsStorage(File), for saving and loading later
+        //Attach the StatsStorage instance to the UI: this allows the contents of the StatsStorage to be visualized
+        uiServer.attach(statsStorage);
+        this.agentParams.put("STATS_STORAGE", statsStorage);
     }
 
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
+
         ExperimentResult result = new ExperimentResult();
         
         SingleTrackRailwayEnvFactory factory = new SingleTrackRailwayEnvFactory();

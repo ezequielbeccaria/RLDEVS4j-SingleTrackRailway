@@ -98,6 +98,9 @@ public class SingleTrackRailwayEnvFactory {
     }
     
     public Environment createEnv03(double simulationTime, boolean debug){
+
+        double delay = 550;
+
         Station s1 = new Station(0, 0D, 50D, 3, true, false);
         BlockSection bs11 = new BlockSection(1, 51D, 2000D, 1);
         BlockSection bs12 = new BlockSection(2, 2001D, 4000D, 1);
@@ -145,7 +148,7 @@ public class SingleTrackRailwayEnvFactory {
         Train train0 = new Train(0, "train0", 70D, timeTable0, bstm);
         
         //Train1 Setup
-        TimeTableEntry tte11 = new TimeTableEntry(10D, EntryType.DEPARTURE, s3);
+        TimeTableEntry tte11 = new TimeTableEntry(10D+delay, EntryType.DEPARTURE, s3);
         TimeTableEntry tte12 = new TimeTableEntry(400D, EntryType.ARRIVAL, s2);
         TimeTableEntry tte13 = new TimeTableEntry(500D, EntryType.DEPARTURE, s2);
         TimeTableEntry tte14 = new TimeTableEntry(800D, EntryType.ARRIVAL, s1);

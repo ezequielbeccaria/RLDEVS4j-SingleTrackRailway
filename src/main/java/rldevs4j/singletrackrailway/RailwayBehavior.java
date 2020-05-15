@@ -34,7 +34,7 @@ public class RailwayBehavior implements Behavior {
     private Continuous action;
     private Double clock;
     private Double nextNotifTime;
-    private Double notifInterval = 20D;
+    private Double notifInterval = 60D;
     //every time an arrival happens, the value for the arrival delay is updated
     private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
     private int[] trainsArrivalCount;
@@ -182,7 +182,10 @@ public class RailwayBehavior implements Behavior {
     }
 
     @Override
-    public boolean notifyAgent() {        
+    public boolean notifyAgent() {
+        if(clock==0D)
+            return true;
+
         if(finalEvent){ //the last event generates the reward 
             return true;
         } 
