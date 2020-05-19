@@ -3,6 +3,8 @@ package rldevs4j.singletrackrailway.factory;
 import java.io.IOException;
 import java.util.Map;
 
+import rldevs4j.agents.dqn.DDQN;
+import rldevs4j.agents.dqn.Model;
 import rldevs4j.agents.ppo.*;
 import rldevs4j.base.agent.Agent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
@@ -37,5 +39,10 @@ public class AgentFactory {
             System.exit(0);
         }
         return null;
+    }
+
+    public static Agent ddqn(Map<String,Object> params){
+        Model model = new Model(params);
+        return new DDQN("DDQN", new MinMaxScaler(minFeatureValues, maxFeatureValues), model, params);
     }
 }
