@@ -1,15 +1,19 @@
 package rldevs4j.singletrackrailway.factory;
 
-import java.io.IOException;
-import java.util.Map;
-
+import rldevs4j.agents.ac.A3C;
+import rldevs4j.agents.ac.FFCritic;
+import rldevs4j.agents.ac.FFDiscreteActor;
 import rldevs4j.agents.dqn.DDQN;
 import rldevs4j.agents.dqn.Model;
+import rldevs4j.agents.dummy.DummyAgent;
 import rldevs4j.agents.ppo.*;
 import rldevs4j.base.agent.Agent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
-import rldevs4j.agents.dummy.DummyAgent;
+import rldevs4j.base.env.factory.EnvironmentFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -26,9 +30,9 @@ public class AgentFactory {
 
     public static Agent ppo(Map<String,Object> params){
 
-        Actor actor = new ContinuousActionActorFixedStd(params);
-        Critic critic = new Critic(params);
-        return new ProximalPolicyOptimization("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), actor, critic, params);
+        PPOActor actor = new ContinuousActionActorFixedStd(params);
+        PPOCritic PPOCritic = new PPOCritic(params);
+        return new ProximalPolicyOptimization("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), actor, PPOCritic, params);
     }
 
     public static Agent ppo_test(String modelPath, double tahnActionLimit){
@@ -44,5 +48,22 @@ public class AgentFactory {
     public static Agent ddqn(Map<String,Object> params){
         Model model = new Model(params);
         return new DDQN("DDQN", new MinMaxScaler(minFeatureValues, maxFeatureValues), model, params);
+    }
+
+    public static A3C a3cDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
+        FFCritic critic = new FFCritic(
+                (int) params.get("OBS_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (int) params.get("HIDDEN_SIZE"));
+        FFDiscreteActor actor = new FFDiscreteActor(
+                (int) params.get("OBS_DIM"),
+                (int) params.get("ACTION_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
+                (int) params.get("HIDDEN_SIZE"),
+                (double[][]) params.get("ACTION_SPACE"));
+        return new A3C(actor, critic, new MinMaxScaler(minFeatureValues, maxFeatureValues), envFactory, params);
     }
 }

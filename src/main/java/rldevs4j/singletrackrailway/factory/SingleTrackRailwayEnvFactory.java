@@ -3,6 +3,7 @@ package rldevs4j.singletrackrailway.factory;
 import java.util.ArrayList;
 import java.util.List;
 import rldevs4j.base.env.Environment;
+import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.singletrackrailway.SingleTrackRailwayEnv;
 import rldevs4j.singletrackrailway.entity.BlockSection;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
@@ -16,7 +17,7 @@ import rldevs4j.singletrackrailway.entity.Train;
  *
  * @author Ezequiel Beccaria
  */
-public class SingleTrackRailwayEnvFactory {
+public class SingleTrackRailwayEnvFactory implements EnvironmentFactory {
     
     public Environment createEnv01(double simulationTime){
         Station s1 = new Station(0, 0D, 50D, 2, true, false);
@@ -255,5 +256,10 @@ public class SingleTrackRailwayEnvFactory {
         trains.add(train2);
         
         return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, debug);
+    }
+
+    @Override
+    public Environment createInstance() {
+        return createEnv03(3000D, false);
     }
 }
