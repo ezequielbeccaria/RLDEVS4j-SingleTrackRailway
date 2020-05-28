@@ -1,4 +1,4 @@
-package rldevs4j.singletrackrailway;
+package rldevs4j.singletrackrailway.nop;
 
 import facade.DevsSuiteFacade;
 
@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.swing.JFrame;
-import org.math.plot.Plot2DPanel;
-import org.nd4j.linalg.api.ndarray.INDArray;
+
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.base.env.Environment;
@@ -20,7 +18,6 @@ import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.agents.dummy.DummyAgent;
 import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
 import rldevs4j.utils.CSVUtils;
-import rldevs4j.utils.CollectionsUtils;
 
 /**
  *
@@ -54,7 +51,7 @@ public class Env3NoActionPolicy extends Experiment{
         Environment env = factory.createEnv03(EPISODE_MAX_TIME, false);
         env.initialize(); //initialize model state
         
-        DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing());
+        DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing(), 2);
         
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
         

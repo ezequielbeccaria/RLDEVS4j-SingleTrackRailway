@@ -20,24 +20,16 @@ import java.util.Map;
  * @author Ezequiel Beccaria
  */
 public class AgentFactory {
-    private static double[] minFeatureValues = {0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
-    private static double[] maxFeatureValues = {14000D, 1666.7D, 14000D, 1666.7D, 2D, 2D, 2D, 2D, 2D, 2D, 2D, 2D, 2D, 2D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1444};
-
-    public static Agent dummy(){
-        return new DummyAgent("dummy_agent", new NoPreprocessing());
-    }
-
 
     public static Agent ppo(Map<String,Object> params){
-
         PPOActor actor = new ContinuousActionActorFixedStd(params);
         PPOCritic PPOCritic = new PPOCritic(params);
-        return new ProximalPolicyOptimization("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), actor, PPOCritic, params);
+        return new ProximalPolicyOptimization("PPO", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), actor, PPOCritic, params);
     }
 
-    public static Agent ppo_test(String modelPath, double tahnActionLimit){
+    public static Agent ppo_test(String modelPath, Map<String,Object> params){
         try {
-            return new ContinuousActionActorTest("PPO", new MinMaxScaler(minFeatureValues, maxFeatureValues), modelPath, tahnActionLimit);
+            return new ContinuousActionActorTest("PPO", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), modelPath, (Double) params.get("TAHN_ACTION_LIMIT"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
@@ -47,7 +39,7 @@ public class AgentFactory {
 
     public static Agent ddqn(Map<String,Object> params){
         Model model = new Model(params);
-        return new DDQN("DDQN", new MinMaxScaler(minFeatureValues, maxFeatureValues), model, params);
+        return new DDQN("DDQN", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), model, params);
     }
 
     public static A3C a3cDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
@@ -64,6 +56,6 @@ public class AgentFactory {
                 (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
                 (int) params.get("HIDDEN_SIZE"),
                 (double[][]) params.get("ACTION_SPACE"));
-        return new A3C(actor, critic, new MinMaxScaler(minFeatureValues, maxFeatureValues), envFactory, params);
+        return new A3C(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
     }
 }

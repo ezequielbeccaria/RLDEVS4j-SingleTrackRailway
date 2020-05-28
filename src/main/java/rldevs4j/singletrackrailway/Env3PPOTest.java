@@ -146,7 +146,7 @@ public class Env3PPOTest extends Experiment{
         Environment env = factory.createEnv03(EPISODE_MAX_TIME, false);
         env.initialize(); //initialize model state
         
-        Agent agent = AgentFactory.ppo_test(super.resultsFilePath, (Double) agentParams.get("TAHN_ACTION_LIMIT"));
+        Agent agent = AgentFactory.ppo_test(super.resultsFilePath, this.agentParams);
         
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
         
