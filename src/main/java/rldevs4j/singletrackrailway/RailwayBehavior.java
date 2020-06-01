@@ -164,9 +164,9 @@ public class RailwayBehavior implements Behavior {
     @Override
     public ExogenousEventActivation activeEvents() {          
         if(action != null){
-            Map<String,Map<String,Double>> content = new HashMap<>();     
+            Map<String,Map<String,Float>> content = new HashMap<>();
             for(int i=0;i<lastTrainEvents.size();i++){
-                Map<String,Double> c = new HashMap<>();   
+                Map<String,Float> c = new HashMap<>();
                 c.put("update", action.getValue()[i]);                
                 content.put(lastTrainEvents.get(i).getName(), c);
             }    

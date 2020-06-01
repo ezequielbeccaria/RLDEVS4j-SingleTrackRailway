@@ -47,7 +47,7 @@ public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
     public ExperimentResult experiment(Random rnd, int experiment) {
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{6D*60D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
         Environment env = factory.createInstance();
         env.initialize(); //initialize model state
         

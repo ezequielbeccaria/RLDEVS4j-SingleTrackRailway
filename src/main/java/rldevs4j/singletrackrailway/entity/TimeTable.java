@@ -119,7 +119,7 @@ public class TimeTable implements Serializable{
             try {
                 details.get(currentEntry+2).updateTime(value);
             } catch (IndexOutOfBoundsException e){
-                System.out.println("ACTION: Can not update departure time");
+//                System.out.println("ACTION: Can not update departure time");
             }
         }
     }

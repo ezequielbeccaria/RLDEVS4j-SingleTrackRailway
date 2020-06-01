@@ -109,7 +109,7 @@ public class Env3PPOTest extends Experiment{
         }
     }
 
-    private void storeAppliedActions(Map<Double, double[]> actions, int actionDim){
+    private void storeAppliedActions(Map<Double, float[]> actions, int actionDim){
         FileWriter writer;
         try {
             String filename = resultsFilePath+String.valueOf(id)+"-"+name+"-actions";
@@ -123,7 +123,7 @@ public class Env3PPOTest extends Experiment{
             CSVUtils.writeLine(writer, headers, '|');
             //write data
             for(Double time : actions.keySet()){
-                double[] action = actions.get(time);
+                float[] action = actions.get(time);
                 List<String> line = new ArrayList<>();
                 line.add(formatter.format(time)); // feature i
                 for(int i=0;i<action.length;i++)

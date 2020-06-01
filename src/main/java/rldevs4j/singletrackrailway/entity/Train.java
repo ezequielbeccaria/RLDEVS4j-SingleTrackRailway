@@ -156,7 +156,7 @@ public class Train extends ExogenousEventGenerator {
     public void deltext(double e, message x) {                
         for (int i = 0; i < x.getLength(); i++) {
             if (messageOnPort(x, "in", i)) {       
-                Map<String, Double> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
+                Map<String, Float> content = ((ExogenousEventActivation)x.getValOnPort("in", i)).getIndividualContent(name);
                 if(content != null){
                     double value = content.get("update");
                     if(value>0){

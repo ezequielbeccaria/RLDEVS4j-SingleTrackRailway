@@ -21,6 +21,24 @@ import java.util.Map;
  */
 public class AgentFactory {
 
+    public static rldevs4j.agents.ppov2.PPO ppoDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
+        rldevs4j.agents.ppov2.FFCritic critic = new rldevs4j.agents.ppov2.FFCritic(
+                (int) params.get("OBS_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
+                (int) params.get("HIDDEN_SIZE"));
+        rldevs4j.agents.ppov2.FFDiscreteActor actor = new rldevs4j.agents.ppov2.FFDiscreteActor(
+                (int) params.get("OBS_DIM"),
+                (int) params.get("ACTION_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (float) params.getOrDefault("ENTROPY_FACTOR", 0.001F),
+                (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
+                (int) params.get("HIDDEN_SIZE"));
+        return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
+    }
+
     public static Agent ppo(Map<String,Object> params){
         PPOActor actor = new ContinuousActionActorFixedStd(params);
         PPOCritic PPOCritic = new PPOCritic(params);
@@ -54,8 +72,7 @@ public class AgentFactory {
                 (double) params.get("LEARNING_RATE"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
-                (int) params.get("HIDDEN_SIZE"),
-                (double[][]) params.get("ACTION_SPACE"));
+                (int) params.get("HIDDEN_SIZE"));
         return new A3C(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
     }
 }
