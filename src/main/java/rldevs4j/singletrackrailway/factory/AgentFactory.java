@@ -1,5 +1,6 @@
 package rldevs4j.singletrackrailway.factory;
 
+import org.deeplearning4j.api.storage.StatsStorage;
 import rldevs4j.agents.ac.A3C;
 import rldevs4j.agents.ac.FFCritic;
 import rldevs4j.agents.ac.FFDiscreteActor;
@@ -27,7 +28,8 @@ public class AgentFactory {
                 (double) params.get("LEARNING_RATE"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
-                (int) params.get("HIDDEN_SIZE"));
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
         rldevs4j.agents.ppov2.FFDiscreteActor actor = new rldevs4j.agents.ppov2.FFDiscreteActor(
                 (int) params.get("OBS_DIM"),
                 (int) params.get("ACTION_DIM"),
@@ -35,7 +37,8 @@ public class AgentFactory {
                 (double) params.getOrDefault("L2", 0.001D),
                 (float) params.getOrDefault("ENTROPY_FACTOR", 0.001F),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
-                (int) params.get("HIDDEN_SIZE"));
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
         return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
     }
 
