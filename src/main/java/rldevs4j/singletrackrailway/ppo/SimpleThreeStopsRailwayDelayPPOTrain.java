@@ -24,7 +24,6 @@ import java.util.logging.Logger;
  * @author Ezequiel Beccaria
  */
 public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
-    private DevsSuiteFacade facade;
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
@@ -40,21 +39,20 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayDelayPPOTrain() {
-        super(0, "PPOTrain1", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
-        this.facade = new DevsSuiteFacade();
+        super(0, "PPOTrain2", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
-        this.agentParams.put("LEARNING_RATE", 3e-4);
+        this.agentParams.put("LEARNING_RATE", 1e-5);
         this.agentParams.put("HIDDEN_SIZE", 64);
         this.agentParams.put("L2", 1e-3);
-        this.agentParams.put("DISCOUNT_RATE", 0.99F);
+        this.agentParams.put("DISCOUNT_RATE", 0.995F);
         this.agentParams.put("LAMBDA_GAE", 0.96F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("TARGET_KL", 0.02F);
         this.agentParams.put("EPOCHS", 5);
-        this.agentParams.put("EPSILON_CLIP", 0.3F);
-        this.agentParams.put("ENTROPY_FACTOR", 0.005F);
+        this.agentParams.put("EPSILON_CLIP", 0.2F);
+        this.agentParams.put("ENTROPY_FACTOR", 0.001F);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
                 {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
@@ -68,7 +66,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 10 );
-        this.agentParams.put("EPISODES_WORKER", 10000);
+        this.agentParams.put("EPISODES_WORKER", 100000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
         double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
@@ -101,7 +99,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
             global.startTraining((Integer) agentParams.getOrDefault("NUMBER_WORKERS", 1));
             logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{global.getResults().getLastAverageReward()});
 
-            global.saveModel(resultsFilePath+name+"_"+experiment);
+            global.saveModel(resultsFilePath+name+"_"+experiment+"_");
         } catch (InterruptedException | IOException ex) {
             Logger.getGlobal().severe(ex.getLocalizedMessage());
         }
