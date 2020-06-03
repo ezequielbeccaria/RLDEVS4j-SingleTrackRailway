@@ -42,6 +42,26 @@ public class AgentFactory {
         return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
     }
 
+    public static rldevs4j.agents.ppov2.PPO ppoLSTMDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
+        rldevs4j.agents.ppov2.LSTMCritic critic = new rldevs4j.agents.ppov2.LSTMCritic(
+                (int) params.get("OBS_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
+        rldevs4j.agents.ppov2.LSTMDiscreteActor actor = new rldevs4j.agents.ppov2.LSTMDiscreteActor(
+                (int) params.get("OBS_DIM"),
+                (int) params.get("ACTION_DIM"),
+                (double) params.get("LEARNING_RATE"),
+                (double) params.getOrDefault("L2", 0.001D),
+                (float) params.getOrDefault("ENTROPY_FACTOR", 0.001F),
+                (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
+        return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
+    }
+
     public static Agent ppo(Map<String,Object> params){
         PPOActor actor = new ContinuousActionActorFixedStd(params);
         PPOCritic PPOCritic = new PPOCritic(params);
