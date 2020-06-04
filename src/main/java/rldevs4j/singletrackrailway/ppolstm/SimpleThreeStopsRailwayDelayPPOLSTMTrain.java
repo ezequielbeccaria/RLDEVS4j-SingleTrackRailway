@@ -41,21 +41,21 @@ public class SimpleThreeStopsRailwayDelayPPOLSTMTrain extends Experiment{
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
-        this.agentParams.put("LEARNING_RATE", 1e-3);
+        this.agentParams.put("LEARNING_RATE", 1e-4);
         this.agentParams.put("HIDDEN_SIZE", 64);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.995F);
         this.agentParams.put("LAMBDA_GAE", 0.96F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
-        this.agentParams.put("TARGET_KL", 0.1F);
+        this.agentParams.put("TARGET_KL", 0.02F);
         this.agentParams.put("EPOCHS", 10);
-        this.agentParams.put("EPSILON_CLIP", 0.3F);
+        this.agentParams.put("EPSILON_CLIP", 0.2F);
         this.agentParams.put("ENTROPY_FACTOR", 0.001F);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
-                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
-                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
-                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
+                {600F, 0F, 0F},{480F, 0F, 0F},{360F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},
+                {0F, 600F, 0F},{0F, 480F, 0F},{0F, 360F, 0F},{0F, 240F, 0F},{0F, 120F, 0F},
+                {0F, 0F, 600F},{0F, 0F, 480F},{0F, 0F, 360F},{0F, 0F, 240F},{0F, 0F, 120F}};
 //        float[][] actionSpace = new float[][]{
 //                {0F, 0F, 0F},
 //                {1000F, 0F, 0F},{900F, 0F, 0F},{800F, 0F, 0F},{700F, 0F, 0F},{600F, 0F, 0F},{500F, 0F, 0F},{400F, 0F, 0F},{300F, 0F, 0F},{200F, 0F, 0F},{100F, 0F, 0F},{50F, 0F, 0F},{10F, 0F, 0F},
