@@ -10,6 +10,7 @@ import rldevs4j.base.env.msg.Event;
 import java.util.List;
 
 public class TestEnvBehavior implements Behavior {
+    private double currentTime;
     private int currentPos;
     private int minPos = 0;
     private int maxPos = 8;
@@ -22,11 +23,13 @@ public class TestEnvBehavior implements Behavior {
     public void initialize() {
         currentPos = Nd4j.getRandom().nextInt(1, 7);
         counter = 0;
+        currentTime = 0D;
     }
 
     @Override
     public void trasition(Event e, double time) {
         lastEvent = e;
+        currentTime = time;
         if(e.getId()!=99){
             int a = actionSpace[e.getId()];
             if(a==-1 && currentPos>minPos)
@@ -39,8 +42,9 @@ public class TestEnvBehavior implements Behavior {
 
     @Override
     public INDArray observation() {
-        INDArray obs = Nd4j.zeros(maxPos+1);
+        INDArray obs = Nd4j.zeros(maxPos+2);
         obs.putScalar(currentPos, 1);
+        obs.putScalar(maxPos+1, currentTime);
         return obs;
     }
 
@@ -75,6 +79,6 @@ public class TestEnvBehavior implements Behavior {
 
     @Override
     public boolean notifyAgent() {
-        return lastEvent.getId()==99;
+        return lastEvent.getId()==99 || counter==100;
     }
 }

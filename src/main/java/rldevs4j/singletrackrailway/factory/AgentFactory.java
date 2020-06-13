@@ -11,6 +11,7 @@ import rldevs4j.agents.ppo.*;
 import rldevs4j.base.agent.Agent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
+import rldevs4j.base.agent.preproc.Preprocessing;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class AgentFactory {
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
                 (int) params.get("HIDDEN_SIZE"),
                 (StatsStorage) params.get("STATS_STORAGE"));
-        return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
+        return new rldevs4j.agents.ppov2.PPO(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }
 
     public static rldevs4j.agents.ppov2.PPO ppoLSTMDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
@@ -59,7 +60,7 @@ public class AgentFactory {
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
                 (int) params.get("HIDDEN_SIZE"),
                 (StatsStorage) params.get("STATS_STORAGE"));
-        return new rldevs4j.agents.ppov2.PPO(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
+        return new rldevs4j.agents.ppov2.PPO(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }
 
     public static Agent ppo(Map<String,Object> params){
@@ -88,14 +89,16 @@ public class AgentFactory {
                 (int) params.get("OBS_DIM"),
                 (double) params.get("LEARNING_RATE"),
                 (double) params.getOrDefault("L2", 0.001D),
-                (int) params.get("HIDDEN_SIZE"));
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
         FFDiscreteActor actor = new FFDiscreteActor(
                 (int) params.get("OBS_DIM"),
                 (int) params.get("ACTION_DIM"),
                 (double) params.get("LEARNING_RATE"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
-                (int) params.get("HIDDEN_SIZE"));
+                (int) params.get("HIDDEN_SIZE"),
+                (StatsStorage) params.get("STATS_STORAGE"));
         return new A3C(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
     }
 }

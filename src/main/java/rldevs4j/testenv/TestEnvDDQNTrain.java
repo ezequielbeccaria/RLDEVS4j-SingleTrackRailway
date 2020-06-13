@@ -46,15 +46,18 @@ public class TestEnvDDQNTrain extends Experiment{
         super(0, "DDQNTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
-        this.agentParams.put("OBS_DIM", 9);
+        this.agentParams.put("OBS_DIM", 10);
         this.agentParams.put("LEARNING_RATE", 1e-3);
         this.agentParams.put("HIDDEN_SIZE", 64);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
+        this.agentParams.put("CLIP_REWARD", 1.0);
+        this.agentParams.put("RWD_MEAN_SCALE", false);
+        this.agentParams.put("RWD_STD_SCALE", false);
 //        float[][] actionSpace = new float[][]{{0},{1},{2}};
         float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("OUTPUT_DIM", actionSpace.length);
-        this.agentParams.put("BATCH_SIZE", 16);
+        this.agentParams.put("BATCH_SIZE", 64);
         this.agentParams.put("TARGET_UPDATE", 500);
         this.agentParams.put("DEBUG", false);
 
