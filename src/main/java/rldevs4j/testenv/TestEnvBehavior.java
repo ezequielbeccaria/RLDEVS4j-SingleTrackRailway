@@ -21,7 +21,7 @@ public class TestEnvBehavior implements Behavior {
 
     @Override
     public void initialize() {
-        currentPos = Nd4j.getRandom().nextInt(1, 7);
+        currentPos = 4;
         counter = 0;
         currentTime = 0D;
     }
@@ -42,19 +42,19 @@ public class TestEnvBehavior implements Behavior {
 
     @Override
     public INDArray observation() {
-        INDArray obs = Nd4j.zeros(maxPos+2);
+        INDArray obs = Nd4j.zeros(maxPos+1);
         obs.putScalar(currentPos, 1);
-        obs.putScalar(maxPos+1, currentTime);
+//        obs.putScalar(maxPos+1, currentTime);
         return obs;
     }
 
     @Override
     public float reward() {
-        if(currentPos==0)
+        if(currentPos==1)
             return 0.1F;
-        if(currentPos==8)
+        if(currentPos==7)
             return 1F;
-        return 0F;
+        return -0.1F;
     }
 
     @Override

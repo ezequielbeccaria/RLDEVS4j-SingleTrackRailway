@@ -56,13 +56,6 @@ public class SingleTrackRailwayEnv extends Environment{
             t.initialize();
         });
     }
-    
-    
-
-    @Override
-    public INDArray getInitialState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     @Override
     public Environment clone() {
@@ -71,11 +64,6 @@ public class SingleTrackRailwayEnv extends Environment{
 
     @Override
     public List<Event> getActionSpace() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public StateSpaceInfo getStateSpaceInfo() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -45,13 +45,14 @@ public class TestEnvA3CTrain extends Experiment{
     public TestEnvA3CTrain() {
         super(0, "TestEnvA3CTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
         this.agentParams = new HashMap<>();
-        this.agentParams.put("OBS_DIM", 10);
+        this.agentParams.put("OBS_DIM", 9);
         this.agentParams.put("LEARNING_RATE", 1e-4);
-        this.agentParams.put("HIDDEN_SIZE", 64);
+        this.agentParams.put("HIDDEN_SIZE", 16);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
-        this.agentParams.put("HORIZON", 50);
-        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
+        this.agentParams.put("HORIZON", 20);
+        float[][] actionSpace = new float[][]{{0},{1},{2}};
+//        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 4);

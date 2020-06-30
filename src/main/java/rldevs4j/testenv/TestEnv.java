@@ -45,22 +45,12 @@ public class TestEnv extends Environment {
     }
 
     @Override
-    public INDArray getInitialState() {
-        return null;
-    }
-
-    @Override
     public Environment clone() {
         return null;
     }
 
     @Override
     public List<Event> getActionSpace() {
-        return null;
-    }
-
-    @Override
-    public StateSpaceInfo getStateSpaceInfo() {
         return null;
     }
 
