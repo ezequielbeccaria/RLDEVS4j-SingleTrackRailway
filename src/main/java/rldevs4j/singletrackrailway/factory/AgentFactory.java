@@ -63,12 +63,6 @@ public class AgentFactory {
         return new rldevs4j.agents.ppov2.PPO(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }
 
-    public static Agent ppo(Map<String,Object> params){
-        PPOActor actor = new ContinuousActionActorFixedStd(params);
-        PPOCritic PPOCritic = new PPOCritic(params);
-        return new ProximalPolicyOptimization("PPO", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), actor, PPOCritic, params);
-    }
-
     public static Agent ppo_test(String modelPath, Map<String,Object> params){
         try {
             return new ContinuousActionActorTest("PPO", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), modelPath, (Double) params.get("TAHN_ACTION_LIMIT"));

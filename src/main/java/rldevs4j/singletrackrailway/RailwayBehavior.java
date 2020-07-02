@@ -9,6 +9,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.base.env.gsmdp.Behavior;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
+import rldevs4j.base.env.msg.Categorical;
 import rldevs4j.base.env.msg.Continuous;
 import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
@@ -183,18 +184,18 @@ public class RailwayBehavior implements Behavior {
 
     @Override
     public boolean notifyAgent() {
+        if(action != null){ //the last event was an action
+            action = null;
+            return false;
+        }
+
         if(clock==0D)
             return true;
 
         if(finalEvent){ //the last event generates the reward 
             return true;
-        } 
-        
-        if(action != null){ //the last event was an action
-            action = null;
-            return false;
         }
-        
+
         //if some of the last events was a train arrival
         for(TrainEvent te : lastTrainEvents.values()){ 
             if(te.isArrival()) {

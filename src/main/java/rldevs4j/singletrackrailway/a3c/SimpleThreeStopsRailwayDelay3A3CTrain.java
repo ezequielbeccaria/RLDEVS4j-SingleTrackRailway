@@ -45,10 +45,10 @@ public class SimpleThreeStopsRailwayDelay3A3CTrain extends Experiment{
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
         this.agentParams.put("LEARNING_RATE", 1e-5);
-        this.agentParams.put("HIDDEN_SIZE", 128);
+        this.agentParams.put("HIDDEN_SIZE", 256);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
-        this.agentParams.put("HORIZON", 100);
+        this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
                 {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
@@ -61,7 +61,7 @@ public class SimpleThreeStopsRailwayDelay3A3CTrain extends Experiment{
 //                {0F, 0F, 1000F},{0F, 0F, 900F},{0F, 0F, 800F},{0F, 0F, 700F},{0F, 0F, 600F},{0F, 0F, 500F},{0F, 0F, 400F},{0F, 0F, 300F},{0F, 0F, 200F},{0F, 0F, 100F},{0F, 0F, 50F},{0F, 0F, 10F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 10);
+        this.agentParams.put("NUMBER_WORKERS", 4);
         this.agentParams.put("EPISODES_WORKER", 100000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);

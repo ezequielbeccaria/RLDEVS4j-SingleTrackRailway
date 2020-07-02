@@ -1,13 +1,12 @@
 package rldevs4j.singletrackrailway.ppo;
 
-import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
-import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
+import rldevs4j.base.agent.preproc.Preprocessing;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
@@ -24,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Ezequiel Beccaria
  */
-public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
+public class SimpleThreeStopsRailwayDelayPPOContTrain extends Experiment{
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
@@ -33,13 +32,13 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new SimpleThreeStopsRailwayDelayPPOTrain();
+        Experiment exp = new SimpleThreeStopsRailwayDelayPPOContTrain();
         exp.run();
 
 //        System.exit(0);
     }
 
-    public SimpleThreeStopsRailwayDelayPPOTrain() {
+    public SimpleThreeStopsRailwayDelayPPOContTrain() {
         super(0, "PPOTrain01", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
@@ -54,19 +53,10 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
         this.agentParams.put("EPOCHS", 10);
         this.agentParams.put("EPSILON_CLIP", 0.4F);
         this.agentParams.put("ENTROPY_FACTOR", 0.001F);
-        float[][] actionSpace = new float[][]{
-                {0F, 0F, 0F},
-                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
-                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
-                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
-//        float[][] actionSpace = new float[][]{
-//                {0F, 0F, 0F},
-//                {1000F, 0F, 0F},{900F, 0F, 0F},{800F, 0F, 0F},{700F, 0F, 0F},{600F, 0F, 0F},{500F, 0F, 0F},{400F, 0F, 0F},{300F, 0F, 0F},{200F, 0F, 0F},{100F, 0F, 0F},{50F, 0F, 0F},{10F, 0F, 0F},
-//                {0F, 1000F, 0F},{0F, 900F, 0F},{0F, 800F, 0F},{0F, 700F, 0F},{0F, 600F, 0F},{0F, 500F, 0F},{0F, 400F, 0F},{0F, 300F, 0F},{0F, 200F, 0F},{0F, 100F, 0F},{0F, 50F, 0F},{0F, 10F, 0F},
-//                {0F, 0F, 1000F},{0F, 0F, 900F},{0F, 0F, 800F},{0F, 0F, 700F},{0F, 0F, 600F},{0F, 0F, 500F},{0F, 0F, 400F},{0F, 0F, 300F},{0F, 0F, 200F},{0F, 0F, 100F},{0F, 0F, 50F},{0F, 0F, 10F}};
-        this.agentParams.put("ACTION_SPACE", actionSpace);
-        this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 4 );
+        this.agentParams.put("TAHN_ACTION_LIMIT", 10F*60F); //Max action 10 min
+        this.agentParams.put("ACTION_SPACE", null);
+        this.agentParams.put("ACTION_DIM", 3);
+        this.agentParams.put("NUMBER_WORKERS", 1 );
         this.agentParams.put("EPISODES_WORKER", 50000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
@@ -88,11 +78,26 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
-        ExperimentResult result = new ExperimentResult();
-
         EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
-        
-        PPO global = AgentFactory.ppoDiscrete(agentParams, factory);
+
+        rldevs4j.agents.ppov2.FFCritic critic = new rldevs4j.agents.ppov2.FFCritic(
+                (int) agentParams.get("OBS_DIM"),
+                (double) agentParams.get("LEARNING_RATE"),
+                (double) agentParams.getOrDefault("L2", 0.001D),
+                (float) agentParams.get("EPSILON_CLIP"),
+                (int) agentParams.get("HIDDEN_SIZE"),
+                (StatsStorage) agentParams.get("STATS_STORAGE"));
+        rldevs4j.agents.ppov2.ContinuousActorFixedStd actor = new rldevs4j.agents.ppov2.ContinuousActorFixedStd(
+                (int) agentParams.get("OBS_DIM"),
+                (int) agentParams.get("ACTION_DIM"),
+                (double) agentParams.get("LEARNING_RATE"),
+                (double) agentParams.getOrDefault("L2", 0.001D),
+                (float) agentParams.get("TAHN_ACTION_LIMIT"),
+                (float) agentParams.get("ENTROPY_FACTOR"),
+                (float) agentParams.get("EPSILON_CLIP"),
+                (int) agentParams.get("HIDDEN_SIZE"),
+                (StatsStorage) agentParams.get("STATS_STORAGE"));
+        PPO global = new rldevs4j.agents.ppov2.PPO(actor, critic, (Preprocessing) agentParams.get("PREPROCESSING"), factory, agentParams);
 
         logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
 
