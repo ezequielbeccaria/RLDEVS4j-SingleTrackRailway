@@ -48,9 +48,9 @@ public class TestEnvPPOTrain extends Experiment{
         this.agentParams.put("DISCOUNT_RATE", 0.995F);
         this.agentParams.put("LAMBDA_GAE", 0.96F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
-        this.agentParams.put("TARGET_KL", 0.05F);
-        this.agentParams.put("EPOCHS", 5);
-        this.agentParams.put("EPSILON_CLIP", 0.2F);
+        this.agentParams.put("TARGET_KL", 0.1F);
+        this.agentParams.put("EPOCHS", 10);
+        this.agentParams.put("EPSILON_CLIP", 0.4F);
         this.agentParams.put("ENTROPY_FACTOR", 0.001F);
         float[][] actionSpace = new float[][]{{0},{1},{2}};
 //        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};

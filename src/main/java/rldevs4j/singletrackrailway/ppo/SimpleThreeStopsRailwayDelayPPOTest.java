@@ -5,6 +5,7 @@ import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
+import rldevs4j.agents.ppo.ContinuousActionActorTest;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.agents.ppov2.TestAgent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
@@ -38,7 +39,6 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
 
-
     /**
      * @param args the command line arguments
      */
@@ -70,11 +70,6 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
                 {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
                 {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
                 {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
-//        float[][] actionSpace = new float[][]{
-//                {0F, 0F, 0F},
-//                {1000F, 0F, 0F},{900F, 0F, 0F},{800F, 0F, 0F},{700F, 0F, 0F},{600F, 0F, 0F},{500F, 0F, 0F},{400F, 0F, 0F},{300F, 0F, 0F},{200F, 0F, 0F},{100F, 0F, 0F},{50F, 0F, 0F},{10F, 0F, 0F},
-//                {0F, 1000F, 0F},{0F, 900F, 0F},{0F, 800F, 0F},{0F, 700F, 0F},{0F, 600F, 0F},{0F, 500F, 0F},{0F, 400F, 0F},{0F, 300F, 0F},{0F, 200F, 0F},{0F, 100F, 0F},{0F, 50F, 0F},{0F, 10F, 0F},
-//                {0F, 0F, 1000F},{0F, 0F, 900F},{0F, 0F, 800F},{0F, 0F, 700F},{0F, 0F, 600F},{0F, 0F, 500F},{0F, 0F, 400F},{0F, 0F, 300F},{0F, 0F, 200F},{0F, 0F, 100F},{0F, 0F, 50F},{0F, 0F, 10F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 10 );
@@ -122,6 +117,7 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
             //Save episode results
             result.addResult(agent.getTotalReward(), finishTime - initTime);
             storeTrace(env.getTrace());
+            storeAppliedActions(agent.getAppliedActions(), (Integer) agentParams.get("ACTION_DIM"));
             // reset agent
             agent.episodeFinished();
 
@@ -170,6 +166,34 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
                 List<String> line = new ArrayList<>();
                 for(int i=0;i<step.observationSize();i++)
                     line.add(formatter.format(step.getFeature(i))); // feature i
+                CSVUtils.writeLine(writer, line, '|');
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void storeAppliedActions(Map<Double, float[]> actions, int actionDim){
+        FileWriter writer;
+        try {
+            String filename = resultsFilePath+String.valueOf(id)+"-"+name+"-actions";
+            writer = new FileWriter(filename);
+            //write headers
+            List<String> headers = new ArrayList<>();
+            headers.add("time");
+            for(int i=0;i<actionDim;i++)
+                headers.add("action"+i);
+
+            CSVUtils.writeLine(writer, headers, '|');
+            //write data
+            for(Double time : actions.keySet()){
+                float[] action = actions.get(time);
+                List<String> line = new ArrayList<>();
+                line.add(formatter.format(time)); // feature i
+                for(int i=0;i<action.length;i++)
+                    line.add(formatter.format(action[i])); // feature i
                 CSVUtils.writeLine(writer, line, '|');
             }
             writer.flush();
