@@ -26,7 +26,7 @@ public class AgentFactory {
     public static rldevs4j.agents.ppov2.PPO ppoDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
         rldevs4j.agents.ppov2.FFCritic critic = new rldevs4j.agents.ppov2.FFCritic(
                 (int) params.get("OBS_DIM"),
-                (double) params.get("LEARNING_RATE"),
+                (double) params.get("LEARNING_RATE_CRITIC"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
                 (int) params.get("HIDDEN_SIZE"),
@@ -34,7 +34,7 @@ public class AgentFactory {
         rldevs4j.agents.ppov2.FFDiscreteActor actor = new rldevs4j.agents.ppov2.FFDiscreteActor(
                 (int) params.get("OBS_DIM"),
                 (int) params.get("ACTION_DIM"),
-                (double) params.get("LEARNING_RATE"),
+                (double) params.get("LEARNING_RATE_ACTOR"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (float) params.getOrDefault("ENTROPY_FACTOR", 0.001F),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),

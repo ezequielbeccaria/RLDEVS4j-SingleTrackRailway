@@ -71,7 +71,7 @@ public class RailwayBehavior implements Behavior {
             List<Float> arribalTimes = new ArrayList<>();
             for(TimeTableEntry tte : tt.getDetails()){
                 if(EntryType.ARRIVAL.equals(tte.getType())){
-                    arribalTimes.add(-10000F); //Max defaul delay value 
+                    arribalTimes.add(-10000F); //Max default delay value
                 }
             }
             trainsArribals.put(t.getId(), arribalTimes);
@@ -130,18 +130,21 @@ public class RailwayBehavior implements Behavior {
     /**
      * The reward is emited only at the end of the training episode.
      */
-    public float reward() {        
+    public float reward() {
+        float reward = 0F;
         for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArrival() && !te.isComputed()){
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
-                TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());       
-                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
+                TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
+                reward += tte.getTime() - clock;
+                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
                 te.computed();
             }
-        } 
-        return finalEvent?calcFinalReward():0F;
+        }
+        reward += finalEvent?calcFinalReward():0F;
+        return reward;
     }
-    
+
     private float calcFinalReward(){
         float reward = 0F;
         for(List<Float> l : trainsArribals.values()){

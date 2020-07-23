@@ -42,16 +42,17 @@ public class TestEnvPPOTrain extends Experiment{
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 9);
-        this.agentParams.put("LEARNING_RATE", 3e-4);
+        this.agentParams.put("LEARNING_RATE_CRITIC", 3e-4);
+        this.agentParams.put("LEARNING_RATE_ACTOR", 3e-4);
         this.agentParams.put("HIDDEN_SIZE", 16);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.995F);
         this.agentParams.put("LAMBDA_GAE", 0.96F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("TARGET_KL", 0.1F);
-        this.agentParams.put("EPOCHS", 10);
+        this.agentParams.put("EPOCHS", 1);
         this.agentParams.put("EPSILON_CLIP", 0.4F);
-        this.agentParams.put("ENTROPY_FACTOR", 0.001F);
+        this.agentParams.put("ENTROPY_FACTOR", 0.1F);
         float[][] actionSpace = new float[][]{{0},{1},{2}};
 //        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
@@ -60,7 +61,7 @@ public class TestEnvPPOTrain extends Experiment{
         this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("PREPROCESSING", new NoPreprocessing());
-        this.agentParams.put("DEBUG", true);
+        this.agentParams.put("DEBUG", false);
 
         //Initialize the user interface backend
         uiServer = UIServer.getInstance();

@@ -34,7 +34,7 @@ public class TestEnvBehavior implements Behavior {
             int a = actionSpace[e.getId()];
             if(a==-1 && currentPos>minPos)
                 currentPos--;
-            else if(a==1 && currentPos<maxPos)
+            else if(a==1 && currentPos != minPos && currentPos<maxPos)
                 currentPos++;
             counter++;
         }
@@ -54,7 +54,7 @@ public class TestEnvBehavior implements Behavior {
             return 0.1F;
         if(currentPos==7)
             return 1F;
-        return -0.1F;
+        return -0.5F;
     }
 
     @Override
