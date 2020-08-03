@@ -1,13 +1,12 @@
 package rldevs4j.singletrackrailway.ppo;
 
-import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
-import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
+import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
@@ -24,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Ezequiel Beccaria
  */
-public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
+public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
@@ -33,41 +32,41 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new SimpleThreeStopsRailwayDelayPPOTrain();
+        Experiment exp = new SimpleThreeStopsRailwayDelayPPOTrain4();
         exp.run();
 
 //        System.exit(0);
     }
 
-    public SimpleThreeStopsRailwayDelayPPOTrain() {
-        super(0, "PPOTrain03", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
+    public SimpleThreeStopsRailwayDelayPPOTrain4() {
+        super(0, "PPOTrain04", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
-        this.agentParams.put("LEARNING_RATE_ACTOR", 1e-5);
-        this.agentParams.put("LEARNING_RATE_CRITIC", 1e-5);
-        this.agentParams.put("HIDDEN_SIZE", 256);
-        this.agentParams.put("L2", 1e-3);
-        this.agentParams.put("DISCOUNT_RATE", 0.995F);
-        this.agentParams.put("LAMBDA_GAE", 0.96F);
+        this.agentParams.put("LEARNING_RATE_ACTOR", 1e-6);
+        this.agentParams.put("LEARNING_RATE_CRITIC", 1e-6);
+        this.agentParams.put("HIDDEN_SIZE", 1024);
+        this.agentParams.put("L2", 1e-4);
+        this.agentParams.put("DISCOUNT_RATE", 0.95F);
+        this.agentParams.put("LAMBDA_GAE", 0.9F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
-        this.agentParams.put("TARGET_KL", 0.02F);
-        this.agentParams.put("EPOCHS", 5);
-        this.agentParams.put("EPSILON_CLIP", 0.2F);
-        this.agentParams.put("ENTROPY_FACTOR", 0.002F);
-        float[][] actionSpace = new float[][]{
-                {0F, 0F, 0F},
-                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
-                {0F, 960F, 0F},{0F, 240F, 0F},{0F, 60F, 0F},
-                {0F, 0F, 960F},{0F, 0F, 240F},{0F, 0F, 60F}};
+        this.agentParams.put("TARGET_KL", 0.003F);
+        this.agentParams.put("EPOCHS", 3);
+        this.agentParams.put("EPSILON_CLIP", 0.4F);
+        this.agentParams.put("ENTROPY_FACTOR", 0.9F);
 //        float[][] actionSpace = new float[][]{
 //                {0F, 0F, 0F},
-//                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
-//                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
-//                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
+//                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
+//                {0F, 960F, 0F},{0F, 240F, 0F},{0F, 60F, 0F},
+//                {0F, 0F, 960F},{0F, 0F, 240F},{0F, 0F, 60F}};
+        float[][] actionSpace = new float[][]{
+                {0F, 0F, 0F},
+                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
+                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
+                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 6 );
+        this.agentParams.put("NUMBER_WORKERS", 5 );
         this.agentParams.put("EPISODES_WORKER", 50000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
@@ -75,7 +74,9 @@ public class SimpleThreeStopsRailwayDelayPPOTrain extends Experiment{
         this.agentParams.put("OBS_MIN", minFeatureValues);
         double[] maxFeatureValues = {15200D, 27D, 15200D, 27D, 15200D, 27D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 3000};
         this.agentParams.put("OBS_MAX", maxFeatureValues);
-        this.agentParams.put("PREPROCESSING", new MinMaxScaler(minFeatureValues, maxFeatureValues));
+//        this.agentParams.put("PREPROCESSING", new MinMaxScaler(minFeatureValues, maxFeatureValues));
+        this.agentParams.put("PREPROCESSING", new NoPreprocessing());
+        this.agentParams.put("DEBUG", true);
 
         //Initialize the user interface backend
         uiServer = UIServer.getInstance();

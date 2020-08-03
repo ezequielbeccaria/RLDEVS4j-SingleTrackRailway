@@ -50,7 +50,7 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
     }
 
     public SimpleThreeStopsRailwayDelayPPOTest(String resultsFilePath) {
-        super(0, "PPOTest1", 1, false, false, resultsFilePath, null);
+        super(0, "PPOTest04", 1, false, false, resultsFilePath, null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
@@ -67,9 +67,14 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
         this.agentParams.put("ENTROPY_FACTOR", 0.002F);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
-                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
-                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
-                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
+                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
+                {0F, 960F, 0F},{0F, 240F, 0F},{0F, 60F, 0F},
+                {0F, 0F, 960F},{0F, 0F, 240F},{0F, 0F, 60F}};
+//        float[][] actionSpace = new float[][]{
+//                {0F, 0F, 0F},
+//                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
+//                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
+//                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 10 );

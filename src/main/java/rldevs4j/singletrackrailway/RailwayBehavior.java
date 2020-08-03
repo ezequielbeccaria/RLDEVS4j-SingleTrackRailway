@@ -35,7 +35,7 @@ public class RailwayBehavior implements Behavior {
     private Continuous action;
     private Double clock;
     private Double nextNotifTime;
-    private Double notifInterval = 60D;
+    private Double notifInterval = 300D;
     //every time an arrival happens, the value for the arrival delay is updated
     private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
     private int[] trainsArrivalCount;
@@ -71,7 +71,7 @@ public class RailwayBehavior implements Behavior {
             List<Float> arribalTimes = new ArrayList<>();
             for(TimeTableEntry tte : tt.getDetails()){
                 if(EntryType.ARRIVAL.equals(tte.getType())){
-                    arribalTimes.add(-10000F); //Max default delay value
+                    arribalTimes.add(-1000F); //Max default delay value
                 }
             }
             trainsArribals.put(t.getId(), arribalTimes);
@@ -136,11 +136,15 @@ public class RailwayBehavior implements Behavior {
             if(te.isArrival() && !te.isComputed()){
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
-                reward += tte.getTime() - clock;
+//                reward += tte.getTime() - clock;
                 trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
+//                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
+
                 te.computed();
             }
         }
+        if(action!=null)
+            reward -= sum(action.getValue());
         reward += finalEvent?calcFinalReward():0F;
         return reward;
     }
@@ -192,19 +196,24 @@ public class RailwayBehavior implements Behavior {
             return false;
         }
 
-        if(clock==0D)
+        if(clock==0D){
+            nextNotifTime = clock + notifInterval;
             return true;
+        }
 
-        if(finalEvent){ //the last event generates the reward 
+
+        if(finalEvent){ //the last event generates the reward
+            nextNotifTime = clock + notifInterval;
             return true;
         }
 
         //if some of the last events was a train arrival
-        for(TrainEvent te : lastTrainEvents.values()){ 
+        for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArrival()) {
                 te.setArribal(false); // to avoid computing reward twise
+                nextNotifTime = clock + notifInterval;
                 return true;
-            }    
+            }
         }
 
         if(clock >= nextNotifTime) {
@@ -213,5 +222,12 @@ public class RailwayBehavior implements Behavior {
         }
 
         return false; //do not notify the agent
+    }
+
+    private float sum(float[] a){
+        float sum = 0F;
+        for(int i=0;i<a.length;i++)
+            sum += a[i];
+        return sum;
     }
 }

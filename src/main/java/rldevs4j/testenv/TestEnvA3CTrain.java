@@ -47,15 +47,15 @@ public class TestEnvA3CTrain extends Experiment{
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 9);
         this.agentParams.put("LEARNING_RATE", 1e-4);
-        this.agentParams.put("HIDDEN_SIZE", 16);
+        this.agentParams.put("HIDDEN_SIZE", 128);
         this.agentParams.put("L2", 1e-3);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
-        this.agentParams.put("HORIZON", 20);
+        this.agentParams.put("HORIZON", Integer.MAX_VALUE );
         float[][] actionSpace = new float[][]{{0},{1},{2}};
 //        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 4);
+        this.agentParams.put("NUMBER_WORKERS", 1);
         this.agentParams.put("EPISODES_WORKER", 5000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
