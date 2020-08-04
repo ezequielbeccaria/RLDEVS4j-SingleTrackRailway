@@ -53,7 +53,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
         this.agentParams.put("TARGET_KL", 0.003F);
         this.agentParams.put("EPOCHS", 3);
         this.agentParams.put("EPSILON_CLIP", 0.4F);
-        this.agentParams.put("ENTROPY_FACTOR", 0.9F);
+        this.agentParams.put("ENTROPY_FACTOR", 2F);
 //        float[][] actionSpace = new float[][]{
 //                {0F, 0F, 0F},
 //                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
@@ -67,7 +67,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 5 );
-        this.agentParams.put("EPISODES_WORKER", 50000);
+        this.agentParams.put("EPISODES_WORKER", 20000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
         double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};

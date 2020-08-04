@@ -9,6 +9,7 @@ import rldevs4j.agents.ppo.ContinuousActionActorTest;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.agents.ppov2.TestAgent;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
+import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.RLEnvironment;
 import rldevs4j.base.env.factory.EnvironmentFactory;
@@ -62,19 +63,19 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
         this.agentParams.put("LAMBDA_GAE", 0.96F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         this.agentParams.put("TARGET_KL", 0.05F);
-        this.agentParams.put("EPOCHS", 10);
+        this.agentParams.put("EPOCHS", 3);
         this.agentParams.put("EPSILON_CLIP", 0.3F);
         this.agentParams.put("ENTROPY_FACTOR", 0.002F);
-        float[][] actionSpace = new float[][]{
-                {0F, 0F, 0F},
-                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
-                {0F, 960F, 0F},{0F, 240F, 0F},{0F, 60F, 0F},
-                {0F, 0F, 960F},{0F, 0F, 240F},{0F, 0F, 60F}};
 //        float[][] actionSpace = new float[][]{
 //                {0F, 0F, 0F},
-//                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
-//                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
-//                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
+//                {960F, 0F, 0F},{240F, 0F, 0F},{60F, 0F, 0F},
+//                {0F, 960F, 0F},{0F, 240F, 0F},{0F, 60F, 0F},
+//                {0F, 0F, 960F},{0F, 0F, 240F},{0F, 0F, 60F}};
+        float[][] actionSpace = new float[][]{
+                {0F, 0F, 0F},
+                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
+                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
+                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 10 );
@@ -84,6 +85,7 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
         double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
         this.agentParams.put("OBS_MIN", minFeatureValues);
         double[] maxFeatureValues = {15200D, 27D, 15200D, 27D, 15200D, 27D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 3000};
+        this.agentParams.put("PREPROCESSING", new NoPreprocessing());
         this.agentParams.put("OBS_MAX", maxFeatureValues);
 
         //Initialize the user interface backend
@@ -101,7 +103,7 @@ public class SimpleThreeStopsRailwayDelayPPOTest extends Experiment{
         EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
         TestAgent agent = new TestAgent(
                 resultsFilePath,
-                new MinMaxScaler((double[]) agentParams.get("OBS_MIN"), (double[]) agentParams.get("OBS_MAX")),
+                new NoPreprocessing(),
                 (float[][])agentParams.get("ACTION_SPACE"));
 
         Environment env = factory.createInstance();
