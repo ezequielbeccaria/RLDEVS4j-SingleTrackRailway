@@ -1,4 +1,4 @@
-package rldevs4j.testenv;
+package rldevs4j.singletrackrailway.a3c;
 
 import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
@@ -6,11 +6,7 @@ import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ac.A3C;
-import rldevs4j.agents.ac.FFCritic;
-import rldevs4j.agents.ac.FFDiscreteActor;
-import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
-import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
@@ -27,8 +23,9 @@ import java.util.logging.Logger;
  *
  * @author Ezequiel Beccaria
  */
-public class TestEnvA3CTrain extends Experiment{
-    private final double EPISODE_MAX_TIME=100.5;
+public class SimpleThreeStopsRailway6MinDelayA3CTrain extends Experiment{
+    private DevsSuiteFacade facade;
+    private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
 
@@ -36,30 +33,38 @@ public class TestEnvA3CTrain extends Experiment{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new TestEnvA3CTrain();
+        Experiment exp = new SimpleThreeStopsRailway6MinDelayA3CTrain();
         exp.run();
 
 //        System.exit(0);
     }
 
-    public TestEnvA3CTrain() {
-        super(0, "TestEnvA3CTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
+    public SimpleThreeStopsRailway6MinDelayA3CTrain() {
+        super(0, "A3CTrain1", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_01/", null);
+        this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
-        this.agentParams.put("OBS_DIM", 9);
+        this.agentParams.put("OBS_DIM", 23);
         this.agentParams.put("LEARNING_RATE", 1e-5);
-        this.agentParams.put("HIDDEN_SIZE", 128);
+        this.agentParams.put("HIDDEN_SIZE", 512);
         this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
-        this.agentParams.put("ENTROPY_FACTOR", 0.2);
-        this.agentParams.put("HORIZON", Integer.MAX_VALUE );
-        float[][] actionSpace = new float[][]{{0},{1},{2}};
-//        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
+        this.agentParams.put("HORIZON", Integer.MAX_VALUE);
+        float[][] actionSpace = new float[][]{
+                {0F, 0F, 0F},
+                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
+                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
+                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 2);
-        this.agentParams.put("EPISODES_WORKER", 50000);
+        this.agentParams.put("NUMBER_WORKERS", 6);
+        this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
+        double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
+        this.agentParams.put("OBS_MIN", minFeatureValues);
+        double[] maxFeatureValues = {15200D, 27D, 15200D, 27D, 15200D, 27D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 3000};
+        this.agentParams.put("OBS_MAX", maxFeatureValues);
+        this.agentParams.put("PREPROCESSING", new NoPreprocessing());
 
         //Initialize the user interface backend
         uiServer = UIServer.getInstance();
@@ -73,23 +78,11 @@ public class TestEnvA3CTrain extends Experiment{
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
-        TestEnvFactory factory = new TestEnvFactory();
+        ExperimentResult result = new ExperimentResult();
 
-        FFCritic critic = new FFCritic(
-                (int) agentParams.get("OBS_DIM"),
-                (double) agentParams.get("LEARNING_RATE"),
-                (double) agentParams.getOrDefault("L2", 0.003D),
-                (int) agentParams.get("HIDDEN_SIZE"),
-                (StatsStorage) agentParams.get("STATS_STORAGE"));
-        FFDiscreteActor actor = new FFDiscreteActor(
-                (int) agentParams.get("OBS_DIM"),
-                (int) agentParams.get("ACTION_DIM"),
-                (double) agentParams.get("LEARNING_RATE"),
-                (double) agentParams.getOrDefault("L2", 0.003D),
-                (double) agentParams.getOrDefault("ENTROPY_FACTOR", 0.02D),
-                (int) agentParams.get("HIDDEN_SIZE"),
-                (StatsStorage) agentParams.get("STATS_STORAGE"));
-        A3C a3cGlobal = new A3C(actor, critic, new NoPreprocessing(), factory, agentParams);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{6D*60D,0D,0D}, false);
+        
+        A3C a3cGlobal = AgentFactory.a3cDiscrete(agentParams, factory);
 
         logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
 

@@ -26,7 +26,7 @@ import java.util.logging.Level;
  */
 public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 10;
+    private final int EPISODES = 1;
     private final double EPISODE_MAX_TIME=2000;
 
     /**

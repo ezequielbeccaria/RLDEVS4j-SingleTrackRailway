@@ -75,7 +75,7 @@ public class AgentFactory {
 
     public static Agent ddqn(Map<String,Object> params){
         Model model = new Model(params);
-        return new DDQN("DDQN", new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), model, params);
+        return new DDQN("DDQN", (Preprocessing) params.get("PREPROCESSING"), model, params);
     }
 
     public static A3C a3cDiscrete(Map<String,Object> params, EnvironmentFactory envFactory){
@@ -93,6 +93,6 @@ public class AgentFactory {
                 (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
                 (int) params.get("HIDDEN_SIZE"),
                 (StatsStorage) params.get("STATS_STORAGE"));
-        return new A3C(actor, critic, new MinMaxScaler((double[])params.get("OBS_MIN"), (double[])params.get("OBS_MAX")), envFactory, params);
+        return new A3C(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }
 }

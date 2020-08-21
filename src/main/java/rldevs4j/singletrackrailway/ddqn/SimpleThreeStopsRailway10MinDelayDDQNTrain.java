@@ -1,34 +1,34 @@
-package rldevs4j.testenv;
+package rldevs4j.singletrackrailway.ddqn;
 
 import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
-import rldevs4j.agents.dqn.DDQN;
-import rldevs4j.agents.dqn.Model;
+import rldevs4j.agents.ac.A3C;
 import rldevs4j.base.agent.Agent;
-import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.RLEnvironment;
+import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.singletrackrailway.factory.AgentFactory;
-import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
+import rldevs4j.singletrackrailway.factory.SimpleThreeStopsRailwayFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Ezequiel Beccaria
  */
-public class TestEnvDDQNTrain extends Experiment{
+public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 5000;
-    private final double EPISODE_MAX_TIME=100.5;
+    private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
 
@@ -36,31 +36,36 @@ public class TestEnvDDQNTrain extends Experiment{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new TestEnvDDQNTrain();
+        Experiment exp = new SimpleThreeStopsRailway10MinDelayDDQNTrain();
         exp.run();
 
 //        System.exit(0);
     }
 
-    public TestEnvDDQNTrain() {
-        super(0, "DDQNTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
+    public SimpleThreeStopsRailway10MinDelayDDQNTrain() {
+        super(0, "DDQNTrain_10Delay", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/DDQN_01/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
-        this.agentParams.put("OBS_DIM", 9);
-        this.agentParams.put("LEARNING_RATE", 1e-4);
-        this.agentParams.put("HIDDEN_SIZE", 64);
+        this.agentParams.put("OBS_DIM", 23);
+        this.agentParams.put("LEARNING_RATE", 1e-6);
+        this.agentParams.put("HIDDEN_SIZE", 1024);
+        this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
-        this.agentParams.put("CLIP_REWARD", 1.0);
-        this.agentParams.put("RWD_MEAN_SCALE", false);
-        this.agentParams.put("RWD_STD_SCALE", false);
-        float[][] actionSpace = new float[][]{{0},{1},{2}};
-//        float[][] actionSpace = new float[][]{{0},{1},{2},{3},{4},{5},{6},{7},{8}};
+        this.agentParams.put("CLIP_GRADIENT_THRESHOLD", 1D);
+        this.agentParams.put("RWD_MEAN_SCALE", true);
+        this.agentParams.put("RWD_STD_SCALE", true);
+        this.agentParams.put("TARGET_UPDATE", 50);
+        float[][] actionSpace = new float[][]{
+                {0F, 0F, 0F},
+                {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
+                {0F, 960F, 0F},{0F, 480F, 0F},{0F, 240F, 0F},{0F, 120, 0F},{0F, 60F, 0F},
+                {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("OUTPUT_DIM", actionSpace.length);
+        this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("BATCH_SIZE", 32);
-        this.agentParams.put("TARGET_UPDATE", 50);
-        this.agentParams.put("MEMORY_SIZE", 5000);
-        this.agentParams.put("DEBUG", true);
+        this.agentParams.put("DEBUG", false);
+        this.agentParams.put("PREPROCESSING", new NoPreprocessing());
 
         //Initialize the user interface backend
         uiServer = UIServer.getInstance();
@@ -76,32 +81,30 @@ public class TestEnvDDQNTrain extends Experiment{
 
         ExperimentResult result = new ExperimentResult();
 
-        TestEnvFactory factory = new TestEnvFactory();
-        
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
         Environment env = factory.createInstance();
         env.initialize(); //initialize model state
 
-        Model model = new Model(agentParams);
-        Agent agent = new DDQN("DDQN", new NoPreprocessing(), model, agentParams);
+        Agent agent = AgentFactory.ddqn(agentParams);
 
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
-        
+
         logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
-        
+        int EPISODES = 5000;
         for(int i=1;i<=EPISODES;i++) {
             //Inititalize environment and simulator
             facade = new DevsSuiteFacade(rlEnv);
             facade.reset();
             //Episode time start
             long initTime = System.currentTimeMillis();
-            //Simulate during "episodeTime" t (minuts of the day) 
+            //Simulate during "episodeTime" t (minuts of the day)
             facade.simulateToTime(EPISODE_MAX_TIME);
             //Episode time stop
             long finishTime = System.currentTimeMillis();
-            //Save episode results            
+            //Save episode results
             result.addResult(agent.getTotalReward(), finishTime - initTime);
 
-            // reset agent    
+            // reset agent
             agent.episodeFinished();
 
             if (i % 1 == 0)
@@ -112,7 +115,6 @@ public class TestEnvDDQNTrain extends Experiment{
         logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});
         agent.saveModel(resultsFilePath+name);
 
-              
-        return result; //Training results    
+        return result; //Training results
     }    
 }

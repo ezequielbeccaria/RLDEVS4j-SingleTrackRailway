@@ -27,7 +27,7 @@ import rldevs4j.utils.CSVUtils;
  */
 public class SimpleThreeStopsRailwayNoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 10;
+    private final int EPISODES = 1;
     private final double EPISODE_MAX_TIME=2000;
 
     /**
