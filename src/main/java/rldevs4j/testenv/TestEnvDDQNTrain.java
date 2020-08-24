@@ -43,7 +43,7 @@ public class TestEnvDDQNTrain extends Experiment{
     }
 
     public TestEnvDDQNTrain() {
-        super(0, "DDQNTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
+        super("DDQNTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 9);

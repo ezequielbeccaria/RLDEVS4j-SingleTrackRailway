@@ -31,6 +31,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
+    private int EPISODES = 50;
 
     /**
      * @param args the command line arguments
@@ -43,7 +44,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayDDQNTrain() {
-        super(0, "DDQNTrain_10Delay", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/DDQN_01/", null);
+        super("DDQNTrain", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/DDQNTrain_10Delay/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
@@ -55,6 +56,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
         this.agentParams.put("RWD_MEAN_SCALE", true);
         this.agentParams.put("RWD_STD_SCALE", true);
         this.agentParams.put("TARGET_UPDATE", 50);
+        this.agentParams.put("MEMORY_SIZE", 10000);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
                 {960F, 0F, 0F},{480F, 0F, 0F},{240F, 0F, 0F},{120F, 0F, 0F},{60F, 0F, 0F},
@@ -81,7 +83,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
 
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false, false);
         Environment env = factory.createInstance();
         env.initialize(); //initialize model state
 
@@ -90,7 +92,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
         RLEnvironment rlEnv = new RLEnvironment(agent, env);
 
         logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
-        int EPISODES = 5000;
+
         for(int i=1;i<=EPISODES;i++) {
             //Inititalize environment and simulator
             facade = new DevsSuiteFacade(rlEnv);
@@ -110,10 +112,10 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
             if (i % 1 == 0)
                 logger.log(Level.INFO, "Episode {0} Terminated. Reward: {1}. Avg-Reward: {2}", new Object[]{i, result.getLastEpisodeReward(), result.getLastAverageReward()});
             if (i % 1000 == 0)
-                agent.saveModel(resultsFilePath+name);
+                agent.saveModel(resultsFilePath+name+"_"+experiment);
         }
-        logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});
-        agent.saveModel(resultsFilePath+name);
+        logger.log(Level.INFO, "Experiment {1} Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward(), experiment});
+        agent.saveModel(resultsFilePath+name+"_"+experiment);
 
         return result; //Training results
     }    

@@ -43,7 +43,7 @@ public class TestEnvA3CTrain extends Experiment{
     }
 
     public TestEnvA3CTrain() {
-        super(0, "TestEnvA3CTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
+        super("TestEnvA3CTrain", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 9);
         this.agentParams.put("LEARNING_RATE", 1e-5);

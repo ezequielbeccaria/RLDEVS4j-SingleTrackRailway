@@ -39,7 +39,7 @@ public class SimpleThreeStopsRailwayDelayPPOContTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayDelayPPOContTrain() {
-        super(0, "PPOTrain01", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
+        super("PPOTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
@@ -78,7 +78,7 @@ public class SimpleThreeStopsRailwayDelayPPOContTrain extends Experiment{
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false,false);
 
         rldevs4j.agents.ppov2.FFCritic critic = new rldevs4j.agents.ppov2.FFCritic(
                 (int) agentParams.get("OBS_DIM"),

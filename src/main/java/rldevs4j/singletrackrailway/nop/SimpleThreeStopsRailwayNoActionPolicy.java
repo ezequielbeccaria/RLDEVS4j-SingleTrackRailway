@@ -41,14 +41,14 @@ public class SimpleThreeStopsRailwayNoActionPolicy extends Experiment{
     }
 
     public SimpleThreeStopsRailwayNoActionPolicy() {
-        super(0, "SimpleThreeStopsRailwayNoActionPolicy", 1, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
+        super("SimpleThreeStopsRailwayNoActionPolicy", 1, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
     }
 
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{0D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{0D,0D,0D}, false,false);
         Environment env = factory.createInstance();
         env.initialize(); //initialize model state
         
@@ -86,7 +86,7 @@ public class SimpleThreeStopsRailwayNoActionPolicy extends Experiment{
     private void storeTrace(List<Step> trace){
         FileWriter writer;
         try {
-            String filename = resultsFilePath+String.valueOf(id)+"-"+name+"-trace";
+            String filename = name+"-trace";
             writer = new FileWriter(filename);
             //write headers
             List<String> headers = new ArrayList<>();

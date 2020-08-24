@@ -40,7 +40,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayA3CTrain() {
-        super(0, "A3CTrain1", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_01/", null);
+        super("A3CTrain1", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_01/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
@@ -80,7 +80,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
 
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false,false);
         
         A3C a3cGlobal = AgentFactory.a3cDiscrete(agentParams, factory);
 

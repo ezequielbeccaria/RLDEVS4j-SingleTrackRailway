@@ -1,21 +1,25 @@
 package rldevs4j.singletrackrailway.factory;
 
+import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.singletrackrailway.SingleTrackRailwayEnv;
 import rldevs4j.singletrackrailway.entity.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
     private double simulationTime;
     private double[] delays;
+    private boolean randomDelay;
     private boolean debug;
 
-    public SimpleThreeStopsRailwayFactory(double simulationTime, double[] delays, boolean debug) {
+    public SimpleThreeStopsRailwayFactory(double simulationTime, double[] delays, boolean randomDelay, boolean debug) {
         this.simulationTime = simulationTime;
         this.delays = delays;
+        this.randomDelay = randomDelay;
         this.debug = debug;
     }
 
@@ -99,8 +103,18 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, debug);
     }
 
+    private void generateRandomDelay(){
+        int delayForTrain = Nd4j.getRandom().nextInt(3);
+        int delayMin = Nd4j.getRandom().nextInt(0, 10);
+        Arrays.fill(delays, 0D);
+        delays[delayForTrain] = delayMin;
+    }
+
     @Override
     public Environment createInstance() {
+        if(randomDelay){
+            generateRandomDelay();
+        }
         return this.createSimpleThreeStopsRailway(simulationTime, debug, delays);
     }
 }

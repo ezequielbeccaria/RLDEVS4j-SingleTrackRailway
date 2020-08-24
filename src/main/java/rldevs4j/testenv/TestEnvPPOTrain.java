@@ -38,7 +38,7 @@ public class TestEnvPPOTrain extends Experiment{
     }
 
     public TestEnvPPOTrain() {
-        super(0, "PPOTrain01", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
+        super("PPOTrain01", 1, false, true, "/home/ezequiel/experiments/TestEnv/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 9);

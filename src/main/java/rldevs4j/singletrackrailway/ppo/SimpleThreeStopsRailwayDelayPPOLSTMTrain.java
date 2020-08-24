@@ -38,7 +38,7 @@ public class SimpleThreeStopsRailwayDelayPPOLSTMTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayDelayPPOLSTMTrain() {
-        super(0, "PPOTrain01", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
+        super("PPOTrain01", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
@@ -88,7 +88,7 @@ public class SimpleThreeStopsRailwayDelayPPOLSTMTrain extends Experiment{
 
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false,false);
         
         PPO global = AgentFactory.ppoLSTMDiscrete(agentParams, factory);
 
