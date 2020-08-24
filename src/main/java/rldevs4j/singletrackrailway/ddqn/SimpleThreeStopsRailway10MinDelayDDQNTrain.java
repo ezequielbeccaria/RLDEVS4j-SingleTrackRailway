@@ -31,7 +31,7 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
-    private int EPISODES = 50;
+    private int EPISODES = 50000;
 
     /**
      * @param args the command line arguments
