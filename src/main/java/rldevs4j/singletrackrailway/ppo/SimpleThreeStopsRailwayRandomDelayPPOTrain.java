@@ -38,7 +38,7 @@ public class SimpleThreeStopsRailwayRandomDelayPPOTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayRandomDelayPPOTrain() {
-        super("PPOTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPOTrain_RandomDelay/", null);
+        super("PPOTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPO_RandomDelay/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);

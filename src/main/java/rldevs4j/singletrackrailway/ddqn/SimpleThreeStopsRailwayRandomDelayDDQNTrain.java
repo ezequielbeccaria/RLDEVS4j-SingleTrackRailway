@@ -41,7 +41,7 @@ public class SimpleThreeStopsRailwayRandomDelayDDQNTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayRandomDelayDDQNTrain() {
-        super("DDQNTrain", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/DDQNTrain_10Delay/", null);
+        super("DDQNTrain", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/DDQN_RandomDelay/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);

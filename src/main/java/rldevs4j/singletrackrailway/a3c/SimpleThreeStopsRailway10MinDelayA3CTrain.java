@@ -40,7 +40,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayA3CTrain() {
-        super("A3CTrain1", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_01/", null);
+        super("A3CTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
