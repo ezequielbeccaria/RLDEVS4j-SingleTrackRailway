@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public class TimeTableEntry implements Serializable{
     private Double time;
+    private Double delay;
     private final EntryType type;
     private final Station station;
 
@@ -17,14 +18,15 @@ public class TimeTableEntry implements Serializable{
      * @param type
      * @param station
      */
-    public TimeTableEntry(Double time, EntryType type, Station station) {
+    public TimeTableEntry(Double time, Double delay, EntryType type, Station station) {
         this.time = time;
+        this.delay = delay;
         this.type = type;
         this.station = station;
     }
 
     public Double getTime() {
-        return time;
+        return time+delay;
     }
     
     public EntryType getType(){
@@ -38,6 +40,9 @@ public class TimeTableEntry implements Serializable{
     public void updateTime(double value){
         this.time += value;
     }
+    public void setDelay(double value) {
+        this.delay = value;
+    }
 
     public BlockSection getStation() {
         return station;
@@ -45,7 +50,7 @@ public class TimeTableEntry implements Serializable{
 
     @Override
     public String toString() {
-        return "{time:"+time+" , type:"+type+"}";
+        return "{time:"+time+", delay:"+delay+", type:"+type+"}";
     }
     
 }

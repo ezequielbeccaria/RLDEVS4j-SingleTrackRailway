@@ -1,13 +1,11 @@
 package rldevs4j.singletrackrailway.factory;
 
-import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.singletrackrailway.SingleTrackRailwayEnv;
 import rldevs4j.singletrackrailway.entity.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
@@ -51,10 +49,10 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         bstm.put(s3);
 
         //Train0 Setup
-        TimeTableEntry tte01 = new TimeTableEntry(2D*60D+delays[0], EntryType.DEPARTURE, s1);
-        TimeTableEntry tte02 = new TimeTableEntry(11D*60D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte03 = new TimeTableEntry(12D*60D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte04 = new TimeTableEntry(18D*60D, EntryType.ARRIVAL, s3);
+        TimeTableEntry tte01 = new TimeTableEntry(2D*60D, delays[0], EntryType.DEPARTURE, s1);
+        TimeTableEntry tte02 = new TimeTableEntry(11D*60D, 0D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte03 = new TimeTableEntry(12D*60D, 0D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte04 = new TimeTableEntry(18D*60D, 0D, EntryType.ARRIVAL, s3);
 
         List<TimeTableEntry> timeTable0Entries = new ArrayList<>();
         timeTable0Entries.add(tte01);
@@ -63,13 +61,13 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         timeTable0Entries.add(tte04);
 
         TimeTable timeTable0 = new TimeTable(timeTable0Entries, 0);
-        Train train0 = new Train(0, "train0", 70D, timeTable0, bstm);
+        Train train0 = new Train(0, "train0", 70D, timeTable0, bstm, randomDelay);
 
         //Train1 Setup
-        TimeTableEntry tte11 = new TimeTableEntry(5D*60D+delays[1], EntryType.DEPARTURE, s3);
-        TimeTableEntry tte12 = new TimeTableEntry(10D*60D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte13 = new TimeTableEntry(16D*60D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte14 = new TimeTableEntry(23D*60D, EntryType.ARRIVAL, s1);
+        TimeTableEntry tte11 = new TimeTableEntry(5D*60D, delays[1], EntryType.DEPARTURE, s3);
+        TimeTableEntry tte12 = new TimeTableEntry(10D*60D, 0D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte13 = new TimeTableEntry(16D*60D, 0D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte14 = new TimeTableEntry(23D*60D, 0D, EntryType.ARRIVAL, s1);
 
         List<TimeTableEntry> timeTable1Entries = new ArrayList<>();
         timeTable1Entries.add(tte11);
@@ -78,13 +76,13 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         timeTable1Entries.add(tte14);
 
         TimeTable timeTable1 = new TimeTable(timeTable1Entries, 0);
-        Train train1 = new Train(1, "train1", 100D, timeTable1, bstm);
+        Train train1 = new Train(1, "train1", 100D, timeTable1, bstm, randomDelay);
 
         //Train2 Setup
-        TimeTableEntry tte21 = new TimeTableEntry(8D*60D+delays[2], EntryType.DEPARTURE, s1);
-        TimeTableEntry tte22 = new TimeTableEntry(14D*60D, EntryType.ARRIVAL, s2);
-        TimeTableEntry tte23 = new TimeTableEntry(16D*60D, EntryType.DEPARTURE, s2);
-        TimeTableEntry tte24 = new TimeTableEntry(21D*60D, EntryType.ARRIVAL, s3);
+        TimeTableEntry tte21 = new TimeTableEntry(8D*60D, delays[2], EntryType.DEPARTURE, s1);
+        TimeTableEntry tte22 = new TimeTableEntry(14D*60D, 0D, EntryType.ARRIVAL, s2);
+        TimeTableEntry tte23 = new TimeTableEntry(16D*60D, 0D, EntryType.DEPARTURE, s2);
+        TimeTableEntry tte24 = new TimeTableEntry(21D*60D, 0D, EntryType.ARRIVAL, s3);
 
         List<TimeTableEntry> timeTable2Entries = new ArrayList<>();
         timeTable2Entries.add(tte21);
@@ -93,28 +91,18 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         timeTable2Entries.add(tte24);
 
         TimeTable timeTable2 = new TimeTable(timeTable2Entries, 0);
-        Train train2 = new Train(2, "train2", 100D, timeTable2, bstm);
+        Train train2 = new Train(2, "train2", 100D, timeTable2, bstm, randomDelay);
 
         List<Train> trains = new ArrayList<>();
         trains.add(train0);
         trains.add(train1);
         trains.add(train2);
 
-        return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, debug);
-    }
-
-    private void generateRandomDelay(){
-        int delayForTrain = Nd4j.getRandom().nextInt(3);
-        int delayMin = Nd4j.getRandom().nextInt(0, 10);
-        Arrays.fill(delays, 0D);
-        delays[delayForTrain] = delayMin;
+        return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, randomDelay, debug);
     }
 
     @Override
     public Environment createInstance() {
-        if(randomDelay){
-            generateRandomDelay();
-        }
         return this.createSimpleThreeStopsRailway(simulationTime, debug, delays);
     }
 }

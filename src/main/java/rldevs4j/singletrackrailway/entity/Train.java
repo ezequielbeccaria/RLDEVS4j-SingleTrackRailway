@@ -8,6 +8,7 @@ import model.simulation.CoordinatorInterface;
 import model.simulation.CoupledCoordinatorInterface;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
+import rldevs4j.singletrackrailway.factory.RandomDelayGenerator;
 import rldevs4j.utils.DoubleUtils;
 
 /**
@@ -25,6 +26,8 @@ public class Train extends ExogenousEventGenerator {
     private BlockSection currentSection;
     private BlockSection objetiveSection;   
     private final Double activeSigma = 1D;
+    private boolean randomDelay;
+    private final RandomDelayGenerator delayGenerator = RandomDelayGenerator.getInstance();
     private boolean debug;
     
     /**
@@ -35,13 +38,14 @@ public class Train extends ExogenousEventGenerator {
      * @param timeTable 
      * @param sections 
      */
-    public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections) {
+    public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections, boolean randomDelay) {
         super(name, null, "passive", DevsInterface.INFINITY);     
         this.id = id;
         this.speed = Math.floor(maxSpeed/3.6D); //To meters/s
         this.direction = 1D;     
         this.initialTimeTable = timeTable.deepCopy();        
-        this.sections = sections;  
+        this.sections = sections;
+        this.randomDelay = randomDelay;
         this.debug = false;
         initialize();
     }
@@ -49,6 +53,8 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public void initialize() {             
         this.timeTable = initialTimeTable.deepCopy();
+        if(randomDelay)
+            this.timeTable.getCurrentEntry().setDelay(delayGenerator.getDelay(id)); //Delay update
         this.position = this.timeTable.getInitPosition();
         this.currentSection = sections.get(this.position);
         this.currentSection.addMe(this);        

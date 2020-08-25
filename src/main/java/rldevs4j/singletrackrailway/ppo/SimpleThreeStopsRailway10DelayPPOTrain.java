@@ -5,7 +5,6 @@ import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ppov2.PPO;
-import rldevs4j.base.agent.preproc.MinMaxScaler;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
 import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
@@ -23,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author Ezequiel Beccaria
  */
-public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
+public class SimpleThreeStopsRailway10DelayPPOTrain extends Experiment{
     private final double EPISODE_MAX_TIME=3000;
     private final Map<String, Object> agentParams;
     protected UIServer uiServer;
@@ -32,14 +31,14 @@ public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new SimpleThreeStopsRailwayDelayPPOTrain4();
+        Experiment exp = new SimpleThreeStopsRailway10DelayPPOTrain();
         exp.run();
 
 //        System.exit(0);
     }
 
-    public SimpleThreeStopsRailwayDelayPPOTrain4() {
-        super("PPOTrain04", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/", null);
+    public SimpleThreeStopsRailway10DelayPPOTrain() {
+        super("PPOTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPOTrain_10Delay/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
@@ -67,7 +66,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
         this.agentParams.put("NUMBER_WORKERS", 5 );
-        this.agentParams.put("EPISODES_WORKER", 20000);
+        this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
         double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
@@ -76,7 +75,7 @@ public class SimpleThreeStopsRailwayDelayPPOTrain4 extends Experiment{
         this.agentParams.put("OBS_MAX", maxFeatureValues);
 //        this.agentParams.put("PREPROCESSING", new MinMaxScaler(minFeatureValues, maxFeatureValues));
         this.agentParams.put("PREPROCESSING", new NoPreprocessing());
-        this.agentParams.put("DEBUG", true);
+        this.agentParams.put("DEBUG", false);
 
         //Initialize the user interface backend
         uiServer = UIServer.getInstance();

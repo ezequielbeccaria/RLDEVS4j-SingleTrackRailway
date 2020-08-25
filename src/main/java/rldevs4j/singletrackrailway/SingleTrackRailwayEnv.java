@@ -14,6 +14,7 @@ import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
 import rldevs4j.singletrackrailway.entity.FinalEvent;
 import rldevs4j.singletrackrailway.entity.TimeTable;
 import rldevs4j.singletrackrailway.entity.Train;
+import rldevs4j.singletrackrailway.factory.RandomDelayGenerator;
 
 /**
  *
@@ -23,8 +24,10 @@ public class SingleTrackRailwayEnv extends Environment{
     private final StateObserver so;
     private final List<Train> trains;
     private final FixedTimeExogenousEventGen episodeFinishEventGen;
+    private final boolean randomDelay;
+    private final RandomDelayGenerator delayGenerator = RandomDelayGenerator.getInstance();
     
-    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean debug) {
+    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean randomDelay, boolean debug) {
         super(name);
         List<TimeTable> tTables = new ArrayList<>();       
         for(Train t : trains)
@@ -33,7 +36,8 @@ public class SingleTrackRailwayEnv extends Environment{
         so = new StateObserver(rb, debug);
         episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime});
         this.trains = trains;
-        
+        this.randomDelay = randomDelay;
+
         add(so);        
         add(episodeFinishEventGen); //This generator is responsible for sending an event at the end of the simulation.
         addCoupling(episodeFinishEventGen, "out", so, "event");
@@ -52,6 +56,8 @@ public class SingleTrackRailwayEnv extends Environment{
     public void initialize() {
         super.initialize();
         so.initialize();
+        if(randomDelay)
+            delayGenerator.updateDelays();
         trains.forEach((t) -> {
             t.initialize();
         });

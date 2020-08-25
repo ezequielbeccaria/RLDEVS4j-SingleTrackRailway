@@ -18,7 +18,6 @@ import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.agents.dummy.DummyAgent;
 import rldevs4j.singletrackrailway.factory.SimpleThreeStopsRailwayFactory;
-import rldevs4j.singletrackrailway.factory.SingleTrackRailwayEnvFactory;
 import rldevs4j.utils.CSVUtils;
 
 /**
