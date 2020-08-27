@@ -113,6 +113,10 @@ public class SimpleThreeStopsRailway10MinDelayDDQNTrain extends Experiment{
                 logger.log(Level.INFO, "Episode {0} Terminated. Reward: {1}. Avg-Reward: {2}", new Object[]{i, result.getLastEpisodeReward(), result.getLastAverageReward()});
             if (i % 1000 == 0)
                 agent.saveModel(resultsFilePath+name+"_"+experiment);
+            double estimatedTimeMinutes = result.getAverageTime().get(result.size()-1)*(EPISODES-i)/60000;
+            int hours = (int) (estimatedTimeMinutes / 60); //since both are ints, you get an int
+            int minutes = (int) (estimatedTimeMinutes % 60);
+            logger.log(Level.INFO, "Estimated time to complete experiment: {0}:{1} Hs", new Object[]{hours, minutes});
         }
         logger.log(Level.INFO, "Experiment {1} Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward(), experiment});
         agent.saveModel(resultsFilePath+name+"_"+experiment);

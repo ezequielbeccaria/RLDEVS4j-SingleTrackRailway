@@ -40,7 +40,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayA3CTrain() {
-        super("A3CTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay/", null);
+        super("A3C", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
@@ -91,7 +91,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
             a3cGlobal.startTraining((Integer) agentParams.getOrDefault("NUMBER_WORKERS", 1));
             logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{a3cGlobal.getResults().getLastAverageReward()});
 
-            a3cGlobal.saveModel(resultsFilePath+name);
+            a3cGlobal.saveModel(resultsFilePath+name+"_"+experiment);
         } catch (InterruptedException | IOException ex) {
             Logger.getGlobal().severe(ex.getLocalizedMessage());
         }

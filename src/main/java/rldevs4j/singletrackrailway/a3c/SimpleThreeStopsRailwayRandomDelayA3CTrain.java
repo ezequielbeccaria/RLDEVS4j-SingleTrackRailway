@@ -91,7 +91,7 @@ public class SimpleThreeStopsRailwayRandomDelayA3CTrain extends Experiment{
             a3cGlobal.startTraining((Integer) agentParams.getOrDefault("NUMBER_WORKERS", 1));
             logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{a3cGlobal.getResults().getLastAverageReward()});
 
-            a3cGlobal.saveModel(resultsFilePath+name);
+            a3cGlobal.saveModel(resultsFilePath+name+"_"+experiment);
         } catch (InterruptedException | IOException ex) {
             Logger.getGlobal().severe(ex.getLocalizedMessage());
         }

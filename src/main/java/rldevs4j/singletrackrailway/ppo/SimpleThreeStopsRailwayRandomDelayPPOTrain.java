@@ -102,7 +102,7 @@ public class SimpleThreeStopsRailwayRandomDelayPPOTrain extends Experiment{
             global.startTraining((Integer) agentParams.getOrDefault("NUMBER_WORKERS", 1));
             logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{global.getResults().getLastAverageReward()});
 
-            global.saveModel(resultsFilePath+name+"_"+experiment+"_");
+            global.saveModel(resultsFilePath+name+"_"+experiment);
         } catch (InterruptedException | IOException ex) {
             Logger.getGlobal().severe(ex.getLocalizedMessage());
         }
