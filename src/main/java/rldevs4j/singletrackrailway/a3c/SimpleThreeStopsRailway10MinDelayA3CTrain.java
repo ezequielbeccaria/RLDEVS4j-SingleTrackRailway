@@ -44,9 +44,9 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
-        this.agentParams.put("LEARNING_RATE", 1e-6);
+        this.agentParams.put("LEARNING_RATE", 1e-5);
         this.agentParams.put("HIDDEN_SIZE", 1024);
-        this.agentParams.put("L2", 1e-6);
+        this.agentParams.put("L2", 1e-4);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         float[][] actionSpace = new float[][]{
@@ -56,7 +56,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
                 {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 6);
+        this.agentParams.put("NUMBER_WORKERS", 5);
         this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", false);
@@ -88,7 +88,7 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
 
         try {
             logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
-            a3cGlobal.startTraining((Integer) agentParams.getOrDefault("NUMBER_WORKERS", 1));
+            a3cGlobal.startTraining((Integer) agentParams.get("NUMBER_WORKERS"));
             logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{a3cGlobal.getResults().getLastAverageReward()});
 
             a3cGlobal.saveModel(resultsFilePath+name+"_"+experiment);

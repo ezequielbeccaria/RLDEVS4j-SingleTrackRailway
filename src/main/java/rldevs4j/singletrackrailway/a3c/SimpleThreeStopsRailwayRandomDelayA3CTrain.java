@@ -56,7 +56,7 @@ public class SimpleThreeStopsRailwayRandomDelayA3CTrain extends Experiment{
                 {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 6);
+        this.agentParams.put("NUMBER_WORKERS", 5);
         this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", false);
