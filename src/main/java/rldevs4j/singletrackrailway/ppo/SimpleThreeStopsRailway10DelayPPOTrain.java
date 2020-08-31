@@ -38,14 +38,14 @@ public class SimpleThreeStopsRailway10DelayPPOTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10DelayPPOTrain() {
-        super("PPOTrain", 1, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPO_10Delay/", null);
+        super("PPO", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPO_10Delay/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
         this.agentParams.put("LEARNING_RATE_ACTOR", 1e-6);
         this.agentParams.put("LEARNING_RATE_CRITIC", 1e-6);
         this.agentParams.put("HIDDEN_SIZE", 1024);
-        this.agentParams.put("L2", 1e-4);
+        this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.95F);
         this.agentParams.put("LAMBDA_GAE", 0.9F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
