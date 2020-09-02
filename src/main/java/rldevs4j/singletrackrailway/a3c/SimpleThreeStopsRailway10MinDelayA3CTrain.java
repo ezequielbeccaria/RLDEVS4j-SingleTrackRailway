@@ -40,14 +40,15 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayA3CTrain() {
-        super("A3C", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay/", null);
+            super("A3C", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay_b/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
-        this.agentParams.put("LEARNING_RATE", 1e-5);
+        this.agentParams.put("LEARNING_RATE", 1e-6);
         this.agentParams.put("HIDDEN_SIZE", 1024);
-        this.agentParams.put("L2", 1e-4);
+        this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
+        this.agentParams.put("ENTROPY_FACTOR", 0.2);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
         float[][] actionSpace = new float[][]{
                 {0F, 0F, 0F},
