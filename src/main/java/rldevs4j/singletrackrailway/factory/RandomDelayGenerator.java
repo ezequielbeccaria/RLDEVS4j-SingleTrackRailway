@@ -30,8 +30,8 @@ public class RandomDelayGenerator implements Serializable {
     public void updateDelays(){
         Arrays.fill(delays, 0D);
         int delayForTrain = Nd4j.getRandom().nextInt(3);
-        int delayMin = Nd4j.getRandom().nextInt(11);
-        delays[delayForTrain] = delayMin;
+        int delayMin = Nd4j.getRandom().nextInt(7,11);
+        delays[delayForTrain] = delayMin * 60D;
     }
 
     public double getDelay(int trainId){

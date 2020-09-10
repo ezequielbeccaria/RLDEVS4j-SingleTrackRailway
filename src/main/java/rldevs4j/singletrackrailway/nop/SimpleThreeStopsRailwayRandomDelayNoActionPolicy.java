@@ -23,30 +23,30 @@ import java.util.logging.Level;
  *
  * @author Ezequiel Beccaria
  */
-public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
+public class SimpleThreeStopsRailwayRandomDelayNoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 1;
+    private final int EPISODES = 50000;
     private final double EPISODE_MAX_TIME=2000;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Experiment exp = new SimpleThreeStopsRailwayDelayNoActionPolicy();
+        Experiment exp = new SimpleThreeStopsRailwayRandomDelayNoActionPolicy();
         exp.run();
 
         System.exit(0);
     }
 
-    public SimpleThreeStopsRailwayDelayNoActionPolicy() {
-        super("NOP", 1, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/NOP_10Delay/", null);
+    public SimpleThreeStopsRailwayRandomDelayNoActionPolicy() {
+        super("NOP", 5, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/NOP_RandomDelay/", null);
     }
 
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false,false);
+        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{0D,0D,0D}, true, false);
         Environment env = factory.createInstance();
         env.initialize(); //initialize model state
         
@@ -74,6 +74,10 @@ public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
 
             if(i%1==0)
                 logger.log(Level.INFO, "Episode {0} Terminated. Reward: {1}. Avg-Reward: {2}", new Object[]{i, result.getLastEpisodeReward(), result.getLastAverageReward()});
+            double estimatedTimeMinutes = result.getAverageTime().get(result.size()-1)*(EPISODES-i)/60000;
+            int hours = (int) (estimatedTimeMinutes / 60); //since both are ints, you get an int
+            int minutes = (int) (estimatedTimeMinutes % 60);
+            logger.log(Level.INFO, "Estimated time to complete experiment: {0}:{1} Hs", new Object[]{hours, minutes});
         }
         
         logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});

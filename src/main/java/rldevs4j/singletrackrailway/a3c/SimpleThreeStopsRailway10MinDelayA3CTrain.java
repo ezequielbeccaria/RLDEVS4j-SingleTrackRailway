@@ -4,6 +4,7 @@ import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ac.A3C;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
@@ -40,12 +41,13 @@ public class SimpleThreeStopsRailway10MinDelayA3CTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailway10MinDelayA3CTrain() {
-            super("A3C", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/A3C_10Delay_b/", null);
+            super("A3C", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/A3C_10Delay/", null);
         this.facade = new DevsSuiteFacade();
         this.agentParams = new HashMap<>();
         this.agentParams.put("OBS_DIM", 23);
         this.agentParams.put("LEARNING_RATE", 1e-6);
         this.agentParams.put("HIDDEN_SIZE", 1024);
+        this.agentParams.put("HIDDEN_ACTIVATION", Activation.TANH);
         this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
         this.agentParams.put("ENTROPY_FACTOR", 0.2);

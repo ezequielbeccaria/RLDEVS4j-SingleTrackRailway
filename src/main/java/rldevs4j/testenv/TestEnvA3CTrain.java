@@ -4,6 +4,7 @@ import facade.DevsSuiteFacade;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ac.A3C;
 import rldevs4j.agents.ac.FFCritic;
@@ -48,6 +49,7 @@ public class TestEnvA3CTrain extends Experiment{
         this.agentParams.put("OBS_DIM", 9);
         this.agentParams.put("LEARNING_RATE", 1e-5);
         this.agentParams.put("HIDDEN_SIZE", 128);
+        this.agentParams.put("HIDDEN_ACTIVATION", Activation.RELU);
         this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.99);
         this.agentParams.put("ENTROPY_FACTOR", 0.2);
@@ -80,6 +82,7 @@ public class TestEnvA3CTrain extends Experiment{
                 (double) agentParams.get("LEARNING_RATE"),
                 (double) agentParams.getOrDefault("L2", 0.003D),
                 (int) agentParams.get("HIDDEN_SIZE"),
+                (Activation) agentParams.get("HIDDEN_ACTIVATION"),
                 (StatsStorage) agentParams.get("STATS_STORAGE"));
         FFDiscreteActor actor = new FFDiscreteActor(
                 (int) agentParams.get("OBS_DIM"),
@@ -88,6 +91,7 @@ public class TestEnvA3CTrain extends Experiment{
                 (double) agentParams.getOrDefault("L2", 0.003D),
                 (double) agentParams.getOrDefault("ENTROPY_FACTOR", 0.02D),
                 (int) agentParams.get("HIDDEN_SIZE"),
+                (Activation) agentParams.get("HIDDEN_ACTIVATION"),
                 (StatsStorage) agentParams.get("STATS_STORAGE"));
         A3C a3cGlobal = new A3C(actor, critic, new NoPreprocessing(), factory, agentParams);
 

@@ -1,6 +1,7 @@
 package rldevs4j.singletrackrailway.factory;
 
 import org.deeplearning4j.api.storage.StatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import rldevs4j.agents.ac.A3C;
 import rldevs4j.agents.ac.FFCritic;
 import rldevs4j.agents.ac.FFDiscreteActor;
@@ -84,6 +85,7 @@ public class AgentFactory {
                 (double) params.get("LEARNING_RATE"),
                 (double) params.getOrDefault("L2", 0.001D),
                 (int) params.get("HIDDEN_SIZE"),
+                (Activation) params.get("HIDDEN_ACTIVATION"),
                 (StatsStorage) params.get("STATS_STORAGE"));
         FFDiscreteActor actor = new FFDiscreteActor(
                 (int) params.get("OBS_DIM"),
@@ -92,6 +94,7 @@ public class AgentFactory {
                 (double) params.getOrDefault("L2", 0.001D),
                 (double) params.getOrDefault("ENTROPY_FACTOR", 0.001D),
                 (int) params.get("HIDDEN_SIZE"),
+                (Activation) params.get("HIDDEN_ACTIVATION"),
                 (StatsStorage) params.get("STATS_STORAGE"));
         return new A3C(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }

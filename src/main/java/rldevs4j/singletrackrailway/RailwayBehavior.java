@@ -137,14 +137,14 @@ public class RailwayBehavior implements Behavior {
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
 //                reward += tte.getTime() - clock;
-                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
-//                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
+//                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
+                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
 
                 te.computed();
             }
         }
-        if(action!=null)
-            reward -= sum(action.getValue());
+//        if(action!=null)
+//            reward -= sum(action.getValue());
         reward += finalEvent?calcFinalReward():0F;
         return reward;
     }

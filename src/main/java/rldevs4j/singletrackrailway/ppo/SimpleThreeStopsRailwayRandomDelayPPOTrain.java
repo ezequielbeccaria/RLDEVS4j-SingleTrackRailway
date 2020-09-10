@@ -38,7 +38,7 @@ public class SimpleThreeStopsRailwayRandomDelayPPOTrain extends Experiment{
     }
 
     public SimpleThreeStopsRailwayRandomDelayPPOTrain() {
-        super("PPO", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailway/PPO_RandomDelay/", null);
+        super("PPO", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/PPO_RandomDelay/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
         this.agentParams.put("OBS_DIM", 23);
@@ -65,7 +65,7 @@ public class SimpleThreeStopsRailwayRandomDelayPPOTrain extends Experiment{
                 {0F, 0F, 960F},{0F, 0F, 480F},{0F, 0F, 240F},{0F, 0F, 120},{0F, 0F, 60F}};
         this.agentParams.put("ACTION_SPACE", actionSpace);
         this.agentParams.put("ACTION_DIM", actionSpace.length);
-        this.agentParams.put("NUMBER_WORKERS", 1 );
+        this.agentParams.put("NUMBER_WORKERS", 5 );
         this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
