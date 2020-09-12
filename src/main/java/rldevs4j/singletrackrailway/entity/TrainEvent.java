@@ -11,14 +11,16 @@ public class TrainEvent extends Event{
     private final String phase;
     private final Double position;
     private final Double speed;
+    private final Double delay;
     private final Integer tteId;    
     private boolean arribal;
     private boolean computed;
     
-    public TrainEvent(int id, String phase, Double position, Double speed, Integer tteId, boolean arribal) {
+    public TrainEvent(int id, String phase, Double position, Double speed, Double delay, Integer tteId, boolean arribal) {
         super(id, "train"+id, EventType.exogenous);
         this.position = position;
         this.speed = speed;
+        this.delay = delay;
         this.phase = phase;
         this.tteId = tteId;
         this.arribal = arribal;
@@ -32,7 +34,11 @@ public class TrainEvent extends Event{
     public Double getSpeed() {
         return speed;
     }
-    
+
+    public Double getDelay() {
+        return delay;
+    }
+
     public Integer getTTEntryId(){
         return tteId;
     }

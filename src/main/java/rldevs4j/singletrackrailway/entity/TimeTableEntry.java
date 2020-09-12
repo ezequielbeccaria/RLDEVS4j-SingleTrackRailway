@@ -40,6 +40,11 @@ public class TimeTableEntry implements Serializable{
     public void updateTime(double value){
         this.time += value;
     }
+
+    public Double getDelay() {
+        return delay;
+    }
+
     public void setDelay(double value) {
         this.delay = value;
     }

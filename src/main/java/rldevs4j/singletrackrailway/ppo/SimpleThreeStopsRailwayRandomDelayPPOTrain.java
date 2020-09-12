@@ -3,6 +3,7 @@ package rldevs4j.singletrackrailway.ppo;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
@@ -45,6 +46,7 @@ public class SimpleThreeStopsRailwayRandomDelayPPOTrain extends Experiment{
         this.agentParams.put("LEARNING_RATE_ACTOR", 1e-6);
         this.agentParams.put("LEARNING_RATE_CRITIC", 1e-6);
         this.agentParams.put("HIDDEN_SIZE", 1024);
+        this.agentParams.put("HIDDEN_ACT", Activation.TANH);
         this.agentParams.put("L2", 1e-4);
         this.agentParams.put("DISCOUNT_RATE", 0.95F);
         this.agentParams.put("LAMBDA_GAE", 0.9F);

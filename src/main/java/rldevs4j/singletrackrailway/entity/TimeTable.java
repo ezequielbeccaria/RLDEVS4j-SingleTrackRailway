@@ -29,6 +29,10 @@ public class TimeTable implements Serializable{
         if(currentEntry>=details.size())
             currentEntry = details.size()-1;
     }
+
+    public Double getDelay(){
+        return this.details.get(0).getDelay();
+    }
     
     public Double getInitPosition(){
         TimeTableEntry tte = details.get(currentEntry);

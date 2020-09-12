@@ -3,6 +3,7 @@ package rldevs4j.singletrackrailway.ppo;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.MinMaxScaler;
@@ -86,6 +87,7 @@ public class SimpleThreeStopsRailwayDelayPPOContTrain extends Experiment{
                 (double) agentParams.getOrDefault("L2", 0.001D),
                 (float) agentParams.get("EPSILON_CLIP"),
                 (int) agentParams.get("HIDDEN_SIZE"),
+                (Activation) agentParams.get("HIDDEN_ACT"),
                 (StatsStorage) agentParams.get("STATS_STORAGE"));
         rldevs4j.agents.ppov2.ContinuousActorFixedStd actor = new rldevs4j.agents.ppov2.ContinuousActorFixedStd(
                 (int) agentParams.get("OBS_DIM"),

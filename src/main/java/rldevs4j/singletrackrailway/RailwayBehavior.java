@@ -63,7 +63,7 @@ public class RailwayBehavior implements Behavior {
         lastTrainEvents = new HashMap<>();
         trainsArribals = new HashMap<>();
         for(Train t : trains){            
-            TrainEvent te = new TrainEvent(t.getId(), "initial", t.getPosition(), 0D, 0, false);
+            TrainEvent te = new TrainEvent(t.getId(), "initial", t.getPosition(), 0D, t.getTimeTable().getDelay(),0, false);
             lastTrainEvents.put(t.getId(), te);
             this.trasition(te, 0D);
             //Trains arribals 
@@ -114,6 +114,7 @@ public class RailwayBehavior implements Behavior {
             TrainEvent te = lastTrainEvents.get(k);
             obs.add(te.getPosition());
             obs.add(te.getSpeed());
+            obs.add(te.getDelay());
         }
         obs.addAll(trainsXSection);    
         
@@ -137,14 +138,14 @@ public class RailwayBehavior implements Behavior {
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
 //                reward += tte.getTime() - clock;
-//                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
-                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
+                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
+//                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
 
                 te.computed();
             }
         }
-//        if(action!=null)
-//            reward -= sum(action.getValue());
+        if(action!=null)
+            reward -= sum(action.getValue());
         reward += finalEvent?calcFinalReward():0F;
         return reward;
     }

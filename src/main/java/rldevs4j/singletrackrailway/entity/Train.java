@@ -148,7 +148,8 @@ public class Train extends ExogenousEventGenerator {
             new TrainEvent(
                     id, 
                     phase, 
-                    position, 
+                    position,
+                    timeTable.getDelay(),
                     phaseIs("active")?direction*speed:0D, 
                     timeTable.getCurrentEntryId(), 
                     arribal())       
@@ -197,7 +198,7 @@ public class Train extends ExogenousEventGenerator {
 
     public Double getSpeed() {
         return speed;
-    }    
+    }
     
     public void updateTimeTable(double value){
         this.timeTable.updateTimes(value, phase);

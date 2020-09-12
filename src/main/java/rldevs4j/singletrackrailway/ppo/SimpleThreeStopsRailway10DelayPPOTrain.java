@@ -3,6 +3,7 @@ package rldevs4j.singletrackrailway.ppo;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
@@ -41,17 +42,18 @@ public class SimpleThreeStopsRailway10DelayPPOTrain extends Experiment{
         super("PPO", 5, false, true, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/PPO_10Delay/", null);
         this.agentParams = new HashMap<>();
         this.agentParams.put("RESULTS_FILE_PATH", resultsFilePath);
-        this.agentParams.put("OBS_DIM", 23);
+        this.agentParams.put("OBS_DIM", 26);
         this.agentParams.put("LEARNING_RATE_ACTOR", 1e-6);
         this.agentParams.put("LEARNING_RATE_CRITIC", 1e-6);
         this.agentParams.put("HIDDEN_SIZE", 1024);
+        this.agentParams.put("HIDDEN_ACT", Activation.TANH);
         this.agentParams.put("L2", 1e-6);
         this.agentParams.put("DISCOUNT_RATE", 0.95F);
         this.agentParams.put("LAMBDA_GAE", 0.9F);
         this.agentParams.put("HORIZON", Integer.MAX_VALUE);
-        this.agentParams.put("TARGET_KL", 0.003F);
+        this.agentParams.put("TARGET_KL", 0.03F);
         this.agentParams.put("EPOCHS", 3);
-        this.agentParams.put("EPSILON_CLIP", 0.4F);
+        this.agentParams.put("EPSILON_CLIP", 0.5F);
         this.agentParams.put("ENTROPY_FACTOR", 2F);
 //        float[][] actionSpace = new float[][]{
 //                {0F, 0F, 0F},
@@ -69,9 +71,9 @@ public class SimpleThreeStopsRailway10DelayPPOTrain extends Experiment{
         this.agentParams.put("EPISODES_WORKER", 10000);
         this.agentParams.put("SIMULATION_TIME", EPISODE_MAX_TIME);
         this.agentParams.put("DEBUG", true);
-        double[] minFeatureValues = {0D, -27D, 0D, -27D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
+        double[] minFeatureValues = {0D, -27D, 0D, 0D, -27D, 0D, 0D, -27D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D};
         this.agentParams.put("OBS_MIN", minFeatureValues);
-        double[] maxFeatureValues = {15200D, 27D, 15200D, 27D, 15200D, 27D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 3000};
+        double[] maxFeatureValues = {15200D, 27D, 10D, 15200D, 27D, 10D, 15200D, 27D, 10D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 3D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 1D, 3000};
         this.agentParams.put("OBS_MAX", maxFeatureValues);
 //        this.agentParams.put("PREPROCESSING", new MinMaxScaler(minFeatureValues, maxFeatureValues));
         this.agentParams.put("PREPROCESSING", new NoPreprocessing());

@@ -31,6 +31,7 @@ public class AgentFactory {
                 (double) params.getOrDefault("L2", 0.001D),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
                 (int) params.get("HIDDEN_SIZE"),
+                (Activation) params.get("HIDDEN_ACT"),
                 (StatsStorage) params.get("STATS_STORAGE"));
         rldevs4j.agents.ppov2.FFDiscreteActor actor = new rldevs4j.agents.ppov2.FFDiscreteActor(
                 (int) params.get("OBS_DIM"),
@@ -40,6 +41,7 @@ public class AgentFactory {
                 (float) params.getOrDefault("ENTROPY_FACTOR", 0.001F),
                 (float) params.getOrDefault("EPSILON_CLIP", 0.2F),
                 (int) params.get("HIDDEN_SIZE"),
+                (Activation) params.get("HIDDEN_ACT"),
                 (StatsStorage) params.get("STATS_STORAGE"));
         return new rldevs4j.agents.ppov2.PPO(actor, critic, (Preprocessing) params.get("PREPROCESSING"), envFactory, params);
     }
