@@ -26,7 +26,7 @@ import java.util.logging.Level;
 public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
     private final int EPISODES = 1;
-    private final double EPISODE_MAX_TIME=2000;
+    private final double EPISODE_MAX_TIME=3000;
 
     /**
      * @param args the command line arguments
@@ -40,6 +40,11 @@ public class SimpleThreeStopsRailwayDelayNoActionPolicy extends Experiment{
 
     public SimpleThreeStopsRailwayDelayNoActionPolicy() {
         super("NOP", 1, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/NOP_10Delay/", null);
+    }
+
+    @Override
+    public void test() {
+
     }
 
     @Override

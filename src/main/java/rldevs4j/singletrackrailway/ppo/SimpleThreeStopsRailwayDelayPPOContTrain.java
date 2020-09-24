@@ -77,6 +77,11 @@ public class SimpleThreeStopsRailwayDelayPPOContTrain extends Experiment{
     }
 
     @Override
+    public void test() {
+
+    }
+
+    @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
         EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{10D*60D,0D,0D}, false,false);

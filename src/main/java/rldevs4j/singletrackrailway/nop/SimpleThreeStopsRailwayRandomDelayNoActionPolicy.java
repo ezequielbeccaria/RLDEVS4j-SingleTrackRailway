@@ -25,9 +25,11 @@ import java.util.logging.Level;
  */
 public class SimpleThreeStopsRailwayRandomDelayNoActionPolicy extends Experiment{
     private DevsSuiteFacade facade;
-    private final int EPISODES = 50000;
-    private final double EPISODE_MAX_TIME=2000;
-
+    private final double EPISODE_MAX_TIME=3000;
+    private double[][] delayTestScenarios = new double[][]{
+            {7D*60D,0D,0D},{8D*60D,0D,0D},{9D*60D,0D,0D},{10D*60D,0D,0D},
+            {0D,7D*60D,0D},{0D,8D*60D,0D},{0D,9D*60D,0D},{0D,10D*60D,0D},
+            {0D,0D,7D*60D},{0D,0D,8D*60D},{0D,0D,9D*60D},{0D,0D,10D*60D}};
     /**
      * @param args the command line arguments
      */
@@ -39,24 +41,30 @@ public class SimpleThreeStopsRailwayRandomDelayNoActionPolicy extends Experiment
     }
 
     public SimpleThreeStopsRailwayRandomDelayNoActionPolicy() {
-        super("NOP", 5, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailwayV2/NOP_RandomDelay/", null);
+        super("NOP", 1, false, false, "/home/ezequiel/experiments/SimpleThreeStopsRailway/NOP_RandomDelay/", null);
+    }
+
+    @Override
+    public void test() {
+
     }
 
     @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
         ExperimentResult result = new ExperimentResult();
 
-        EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, new double[]{0D,0D,0D}, true, false);
-        Environment env = factory.createInstance();
-        env.initialize(); //initialize model state
+        for(int i=0;i<delayTestScenarios.length;i++){
+            EnvironmentFactory factory = new SimpleThreeStopsRailwayFactory(EPISODE_MAX_TIME, delayTestScenarios[i], false, true, false);
+            Environment env = factory.createInstance();
+            env.initialize(); //initialize model state
+
+            DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing(), 3);
+
+            RLEnvironment rlEnv = new RLEnvironment(agent, env);
+
+            logger.log(Level.INFO, "Test Start. Experiment #{0}", new Object[]{experiment});
         
-        DummyAgent agent = new DummyAgent("dummy_agent", new NoPreprocessing(), 3);
-        
-        RLEnvironment rlEnv = new RLEnvironment(agent, env);
-        
-        logger.log(Level.INFO, "Training Start. Experiment #{0}", new Object[]{experiment});
-        
-        for(int i=1;i<=EPISODES;i++){        
+
             //Inititalize environment and simulator
             facade = new DevsSuiteFacade(rlEnv);
             facade.reset();
@@ -68,27 +76,27 @@ public class SimpleThreeStopsRailwayRandomDelayNoActionPolicy extends Experiment
             long finishTime = System.currentTimeMillis();
             //Save episode results            
             result.addResult(agent.getTotalReward(), finishTime-initTime);
-            storeTrace(env.getTrace());
+            storeTrace(env.getTrace(), i);
             // reset agent
             agent.episodeFinished();
 
             if(i%1==0)
                 logger.log(Level.INFO, "Episode {0} Terminated. Reward: {1}. Avg-Reward: {2}", new Object[]{i, result.getLastEpisodeReward(), result.getLastAverageReward()});
-            double estimatedTimeMinutes = result.getAverageTime().get(result.size()-1)*(EPISODES-i)/60000;
+            double estimatedTimeMinutes = result.getAverageTime().get(result.size()-1)*(delayTestScenarios.length-i)/60000;
             int hours = (int) (estimatedTimeMinutes / 60); //since both are ints, you get an int
             int minutes = (int) (estimatedTimeMinutes % 60);
             logger.log(Level.INFO, "Estimated time to complete experiment: {0}:{1} Hs", new Object[]{hours, minutes});
         }
         
-        logger.log(Level.INFO, "Training Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});
+        logger.log(Level.INFO, "Test Finalized. Avg-Reward: {0}", new Object[]{result.getLastAverageReward()});
               
         return result; //Training results    
     }
 
-    private void storeTrace(List<Step> trace){
+    private void storeTrace(List<Step> trace, int scenario){
         FileWriter writer;
         try {
-            String filename = name+"-trace";
+            String filename = super.resultsFilePath+"/"+name+"_"+scenario+"_trace.csv";
             writer = new FileWriter(filename);
             //write headers
             List<String> headers = new ArrayList<>();

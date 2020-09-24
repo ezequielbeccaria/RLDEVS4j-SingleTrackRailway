@@ -73,6 +73,11 @@ public class TestEnvA3CTrain extends Experiment{
     }
 
     @Override
+    public void test() {
+
+    }
+
+    @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
         TestEnvFactory factory = new TestEnvFactory();

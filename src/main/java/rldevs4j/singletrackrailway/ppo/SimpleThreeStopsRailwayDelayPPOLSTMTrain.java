@@ -84,6 +84,11 @@ public class SimpleThreeStopsRailwayDelayPPOLSTMTrain extends Experiment{
     }
 
     @Override
+    public void test() {
+
+    }
+
+    @Override
     public ExperimentResult experiment(Random rnd, int experiment) {
 
         ExperimentResult result = new ExperimentResult();

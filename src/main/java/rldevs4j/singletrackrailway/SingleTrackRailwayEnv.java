@@ -27,12 +27,12 @@ public class SingleTrackRailwayEnv extends Environment{
     private final boolean randomDelay;
     private final RandomDelayGenerator delayGenerator = RandomDelayGenerator.getInstance();
     
-    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean randomDelay, boolean debug) {
+    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean randomDelay, boolean test, boolean debug) {
         super(name);
         List<TimeTable> tTables = new ArrayList<>();       
         for(Train t : trains)
             tTables.add(t.getTimeTable().deepCopy());
-        RailwayBehavior rb = new RailwayBehavior(sections, trains, tTables);
+        RailwayBehavior rb = new RailwayBehavior(sections, trains, tTables, test);
         so = new StateObserver(rb, debug);
         episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime});
         this.trains = trains;

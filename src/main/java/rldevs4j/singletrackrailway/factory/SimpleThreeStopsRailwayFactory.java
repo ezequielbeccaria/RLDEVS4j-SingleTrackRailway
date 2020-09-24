@@ -13,12 +13,18 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
     private double[] delays;
     private boolean randomDelay;
     private boolean debug;
+    private boolean test;
 
     public SimpleThreeStopsRailwayFactory(double simulationTime, double[] delays, boolean randomDelay, boolean debug) {
+        this(simulationTime, delays, randomDelay, false, debug);
+    }
+
+    public SimpleThreeStopsRailwayFactory(double simulationTime, double[] delays, boolean randomDelay, boolean test, boolean debug) {
         this.simulationTime = simulationTime;
         this.delays = delays;
         this.randomDelay = randomDelay;
         this.debug = debug;
+        this.test = test;
     }
 
     /**
@@ -98,7 +104,7 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         trains.add(train1);
         trains.add(train2);
 
-        return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, randomDelay, debug);
+        return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, randomDelay, test, debug);
     }
 
     @Override

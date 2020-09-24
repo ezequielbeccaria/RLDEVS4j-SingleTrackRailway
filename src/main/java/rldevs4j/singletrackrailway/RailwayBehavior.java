@@ -40,11 +40,13 @@ public class RailwayBehavior implements Behavior {
     private Map<Integer, List<Float>> trainsArribals; //Used to calc reward at the end of the episode
     private int[] trainsArrivalCount;
     private boolean finalEvent;
+    private boolean test;
 
-    public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables) {
+    public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, List<TimeTable> timeTables, boolean test) {
         this.sections = sections;                        
         this.timeTables = timeTables;
         this.trains = trains;
+        this.test = test;
         initialize();
     }
     
@@ -114,7 +116,7 @@ public class RailwayBehavior implements Behavior {
             TrainEvent te = lastTrainEvents.get(k);
             obs.add(te.getPosition());
             obs.add(te.getSpeed());
-            obs.add(te.getDelay());
+//            obs.add(te.getDelay());
         }
         obs.addAll(trainsXSection);    
         
@@ -137,14 +139,14 @@ public class RailwayBehavior implements Behavior {
             if(te.isArrival() && !te.isComputed()){
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
-//                reward += tte.getTime() - clock;
+                reward += test ? tte.getTime() - clock : 0F;
                 trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
 //                trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, new Float(tte.getTime() - clock));
 
                 te.computed();
             }
         }
-        if(action!=null)
+        if(action!=null && !test)
             reward -= sum(action.getValue());
         reward += finalEvent?calcFinalReward():0F;
         return reward;
