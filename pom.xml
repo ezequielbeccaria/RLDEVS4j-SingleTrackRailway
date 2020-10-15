@@ -17,6 +17,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>RLDEVS4j-Base</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>RLDEVS4j-Agents</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--CUDA-->
 <!--        <dependency>-->
 <!--            <groupId>org.nd4j</groupId>-->
@@ -112,16 +123,19 @@
             <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- REST API -->
+        <!-- https://mvnrepository.com/artifact/com.sparkjava/spark-core -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>RLDEVS4j-Base</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>2.9.2</version>
         </dependency>
+        <!-- JSON Parsing -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>RLDEVS4j-Agents</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.11.3</version>
         </dependency>
     </dependencies>
     <properties>
@@ -130,4 +144,44 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <deeplearning4j.version>1.0.0-beta6</deeplearning4j.version>
     </properties>
+    <build>
+        <finalName>RLDEVS4j-SingleTrackRailway</finalName>
+        <plugins>
+            <!-- Set a compiler level -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.target}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Assembly Plugin -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>rldevs4j.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
