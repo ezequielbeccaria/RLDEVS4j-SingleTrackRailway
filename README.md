@@ -1,0 +1,2 @@
+# RLDEVS4j - Single Track Railway Environment
+Implementation of the environment described in [Reinforcement learning approach for train rescheduling on a single-track railway](https://www.sciencedirect.com/science/article/abs/pii/S0191261516000084)
