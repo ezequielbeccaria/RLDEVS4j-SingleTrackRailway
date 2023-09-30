@@ -6,11 +6,9 @@ import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.linalg.api.rng.Random;
 import rldevs4j.agents.ppov2.PPO;
 import rldevs4j.base.agent.preproc.NoPreprocessing;
-import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
 import rldevs4j.singletrackrailway.factory.AgentFactory;
-import rldevs4j.singletrackrailway.factory.SimpleThreeStopsRailwayFactory;
 
 import java.io.IOException;
 import java.util.HashMap;

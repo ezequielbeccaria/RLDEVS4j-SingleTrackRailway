@@ -1,8 +1,6 @@
 package rldevs4j.testenv;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
 import rldevs4j.base.env.Environment;
-import rldevs4j.base.env.StateSpaceInfo;
 import rldevs4j.base.env.gsmdp.StateObserver;
 import rldevs4j.base.env.gsmdp.evgen.FixedTimeExogenousEventGen;
 import rldevs4j.base.env.msg.Event;
@@ -10,6 +8,7 @@ import rldevs4j.base.env.msg.EventType;
 import rldevs4j.base.env.msg.Step;
 
 import java.util.List;
+import rldevs4j.base.env.spaces.Space;
 
 public class TestEnv extends Environment {
     private final StateObserver so;
@@ -50,12 +49,17 @@ public class TestEnv extends Environment {
     }
 
     @Override
-    public List<Event> getActionSpace() {
+    public Space getActionSpace() {
         return null;
     }
 
     @Override
     public List<Step> getTrace() {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Space getStateSpace() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

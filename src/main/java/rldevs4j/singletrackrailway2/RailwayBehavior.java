@@ -97,15 +97,14 @@ public class RailwayBehavior implements Behavior {
         if(clock == null || time > clock)
             clock = time;
     }
-
+    
     @Override
-    public INDArray observation() {
+    public List<Double> observation(){
         List<Double> obs = new ArrayList<>();
         for(Integer k : lastTrainEvents.keySet()){
             TrainEvent te = lastTrainEvents.get(k);
             obs.add(te.getPosition());
             obs.add(te.getSpeed());
-//            obs.add(te.getDelay());
         }
         obs.addAll(trainsXSection);    
         
@@ -114,8 +113,12 @@ public class RailwayBehavior implements Behavior {
             obs.add(bsList.get(i).isAvailable()?1D:0D);
         }        
         obs.add(clock); // add clock
-
-        return Nd4j.create(obs);
+        return obs;
+    }
+    
+    
+    public INDArray observationINDArray() {
+        return Nd4j.create(this.observation());
     }
 
     @Override

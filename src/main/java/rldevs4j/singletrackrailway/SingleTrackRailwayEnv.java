@@ -2,14 +2,12 @@ package rldevs4j.singletrackrailway;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.nd4j.linalg.api.ndarray.INDArray;
 import rldevs4j.base.env.Environment;
-import rldevs4j.base.env.StateSpaceInfo;
 import rldevs4j.base.env.gsmdp.StateObserver;
 import rldevs4j.base.env.gsmdp.evgen.FixedTimeExogenousEventGen;
-import rldevs4j.base.env.msg.Event;
 import rldevs4j.base.env.msg.EventType;
 import rldevs4j.base.env.msg.Step;
+import rldevs4j.base.env.spaces.Space;
 import rldevs4j.singletrackrailway.entity.BlockSectionTreeMap;
 import rldevs4j.singletrackrailway.entity.FinalEvent;
 import rldevs4j.singletrackrailway.entity.TimeTable;
@@ -65,17 +63,22 @@ public class SingleTrackRailwayEnv extends Environment{
 
     @Override
     public Environment clone() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<Event> getActionSpace() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Space getActionSpace() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public List<Step> getTrace() {
         return this.so.getTrace();
+    }
+
+    @Override
+    public Space getStateSpace() {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
     
 }

@@ -35,7 +35,8 @@ public class TrainEvent extends Event{
         return speed;
     }
 
-    public Double getDelay() {
+    @Override
+    public double getDelay() {
         return delay;
     }
 

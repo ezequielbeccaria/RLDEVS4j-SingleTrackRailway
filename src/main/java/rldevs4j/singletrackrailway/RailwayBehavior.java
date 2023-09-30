@@ -9,7 +9,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import rldevs4j.base.env.gsmdp.Behavior;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
-import rldevs4j.base.env.msg.Categorical;
 import rldevs4j.base.env.msg.Continuous;
 import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway.entity.BlockSection;
@@ -108,15 +107,14 @@ public class RailwayBehavior implements Behavior {
         if(clock == null || time > clock)
             clock = time;
     }
-
+    
     @Override
-    public INDArray observation() {
+    public List<Double> observation(){
         List<Double> obs = new ArrayList<>();
         for(Integer k : lastTrainEvents.keySet()){
             TrainEvent te = lastTrainEvents.get(k);
             obs.add(te.getPosition());
             obs.add(te.getSpeed());
-//            obs.add(te.getDelay());
         }
         obs.addAll(trainsXSection);    
         
@@ -125,8 +123,12 @@ public class RailwayBehavior implements Behavior {
             obs.add(bsList.get(i).isAvailable()?1D:0D);
         }        
         obs.add(clock); // add clock
-
-        return Nd4j.create(obs);
+        return obs;
+    }
+    
+    
+    public INDArray observationINDArray() {
+        return Nd4j.create(this.observation());
     }
 
     @Override

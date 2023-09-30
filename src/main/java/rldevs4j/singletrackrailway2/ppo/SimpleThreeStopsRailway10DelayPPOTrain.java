@@ -17,7 +17,7 @@ import rldevs4j.base.env.factory.EnvironmentFactory;
 import rldevs4j.base.env.msg.Step;
 import rldevs4j.experiment.Experiment;
 import rldevs4j.experiment.ExperimentResult;
-import rldevs4j.singletrackrailway2.SimpleThreeStopsRailwayFactory;
+import rldevs4j.singletrackrailway.factory.SimpleThreeStopsRailwayFactory;
 import rldevs4j.utils.CSVUtils;
 
 import java.io.FileWriter;

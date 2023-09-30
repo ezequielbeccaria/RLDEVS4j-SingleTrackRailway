@@ -40,11 +40,9 @@ public class TestEnvBehavior implements Behavior {
         }
     }
 
-    @Override
-    public INDArray observation() {
+    public INDArray observationINDArray() {
         INDArray obs = Nd4j.zeros(maxPos+1);
         obs.putScalar(currentPos, 1);
-//        obs.putScalar(maxPos+1, currentTime);
         return obs;
     }
 
@@ -80,5 +78,10 @@ public class TestEnvBehavior implements Behavior {
     @Override
     public boolean notifyAgent() {
         return lastEvent.getId()==99 || counter==100;
+    }
+
+    @Override
+    public List<Double> observation() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
