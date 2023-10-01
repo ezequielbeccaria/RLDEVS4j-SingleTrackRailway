@@ -9,6 +9,17 @@ Implementation of the environment described in [Reinforcement learning approach 
 
 ## Usage
 
+### Compile
+
+It is necessary to compile each of the dependencies previously to use the project. 
+In each dependency root folder execute:
+
+```bash
+javac -classpath . app/Main.java
+```
+
+After that, do the same with the current proyect.
+
 ### Agent Training
 
 To execute an agent training en one of the possible scenarios:
