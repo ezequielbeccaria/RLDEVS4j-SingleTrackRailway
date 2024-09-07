@@ -127,7 +127,7 @@ public class RailwayBehavior implements Behavior {
      */
     public float reward() {
         float reward = 0F;
-        for(TrainEvent te : lastTrainEvents.values()){
+        /*for(TrainEvent te : lastTrainEvents.values()){
             if(te.isArrival() && !te.isComputed()){
                 trainsArrivalCount[te.getId()] = trainsArrivalCount[te.getId()]+1;
                 TimeTableEntry tte = timeTables.get(te.getId()).getNextArribalEntry(te.getTTEntryId());
@@ -135,9 +135,9 @@ public class RailwayBehavior implements Behavior {
                 trainsArribals.get(te.getId()).set(trainsArrivalCount[te.getId()]-1, 0F);
                 te.computed();
             }
-        }
-//        if(action!=null && !test)
-//            reward -= sum(action.getValue());
+        }*/
+        if(action!=null && !test)
+            reward -= sum(action.getValue());
         reward += finalEvent?calcFinalReward():0F;
         return reward;
     }
