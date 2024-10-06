@@ -1,4 +1,4 @@
-package rldevs4j.singletrackrailway.factory;
+package rldevs4j.singletrackrailway2.entity;
 
 import org.nd4j.linalg.factory.Nd4j;
 

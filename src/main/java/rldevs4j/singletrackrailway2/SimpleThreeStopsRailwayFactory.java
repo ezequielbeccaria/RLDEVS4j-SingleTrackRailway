@@ -1,10 +1,9 @@
-package rldevs4j.singletrackrailway.factory;
+package rldevs4j.singletrackrailway2;
 
 import rldevs4j.base.env.Environment;
 import rldevs4j.base.env.factory.EnvironmentFactory;
-import rldevs4j.singletrackrailway.SingleTrackRailwayEnv;
-import rldevs4j.singletrackrailway.entity.*;
-
+import rldevs4j.singletrackrailway2.entity.*;
+import rldevs4j.singletrackrailway2.SimpleThreeStopsRailwayEnv;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +103,7 @@ public class SimpleThreeStopsRailwayFactory implements EnvironmentFactory {
         trains.add(train1);
         trains.add(train2);
 
-        return new SingleTrackRailwayEnv("env", trains, bstm, simulationTime, randomDelay, test, debug);
+        return new SimpleThreeStopsRailwayEnv("env", trains, bstm, simulationTime, randomDelay, test, debug);
     }
 
     @Override

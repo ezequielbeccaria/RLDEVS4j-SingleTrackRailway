@@ -7,7 +7,6 @@ import model.simulation.CoordinatorInterface;
 import model.simulation.CoupledCoordinatorInterface;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventGenerator;
-import rldevs4j.singletrackrailway.factory.RandomDelayGenerator;
 import rldevs4j.utils.DoubleUtils;
 
 import java.util.Map;

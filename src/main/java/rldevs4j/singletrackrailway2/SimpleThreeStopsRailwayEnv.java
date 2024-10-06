@@ -13,25 +13,22 @@ import rldevs4j.singletrackrailway2.entity.Train;
 import java.util.ArrayList;
 import java.util.List;
 import rldevs4j.base.env.spaces.Space;
-import rldevs4j.singletrackrailway.factory.RandomDelayGenerator;
+import rldevs4j.singletrackrailway2.entity.RandomDelayGenerator;
 
 /**
  *
  * @author Ezequiel Beccaria
  */
-public class SingleTrackRailwayEnv extends Environment{
+public class SimpleThreeStopsRailwayEnv extends Environment{
     private final StateObserver so;
     private final List<Train> trains;
     private final FixedTimeExogenousEventGen episodeFinishEventGen;
     private final boolean randomDelay;
     private final RandomDelayGenerator delayGenerator = RandomDelayGenerator.getInstance();
     
-    public SingleTrackRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean randomDelay, boolean test, boolean debug) {
+    public SimpleThreeStopsRailwayEnv(String name, List<Train> trains, BlockSectionTreeMap sections, double simulationTime, boolean randomDelay, boolean test, boolean debug) {
         super(name);
-        List<TimeTable> tTables = new ArrayList<>();       
-        for(Train t : trains)
-            tTables.add(t.getTimeTable().deepCopy());
-        RailwayBehavior rb = new RailwayBehavior(sections, trains, tTables, test);
+        RailwayBehavior rb = new RailwayBehavior(sections, trains, test);
         so = new StateObserver(rb, debug);
         episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime});
         this.trains = trains;
