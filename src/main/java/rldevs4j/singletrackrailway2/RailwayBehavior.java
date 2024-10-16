@@ -1,5 +1,6 @@
 package rldevs4j.singletrackrailway2;
 
+import com.google.common.collect.HashBiMap;
 import rldevs4j.base.env.gsmdp.Behavior;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.msg.DiscreteEvent;
@@ -7,6 +8,7 @@ import rldevs4j.base.env.msg.Event;
 import rldevs4j.singletrackrailway2.entity.*;
 
 import java.util.*;
+import rldevs4j.base.env.msg.EventType;
 
 /**
  *
@@ -20,17 +22,26 @@ public class RailwayBehavior implements Behavior {
     private final List<Train> trains;
     private DiscreteEvent action;
     private Double clock;
-    private Double nextNotifTime;
-    private Double notifInterval = 1D;
+    private double notifInterval = 1D;
     //every time an arrival happens, the value for the arrival delay is updated
     private int trainsArrivalCount;
     private boolean finalEvent;
     private boolean test;
+    private Map<Integer, DiscreteEvent> action2Event;
 
     public RailwayBehavior(BlockSectionTreeMap sections, List<Train> trains, boolean test) {
         this.sections = sections;                        
         this.trains = trains;
         this.test = test;
+        
+        action2Event = new HashMap<>();
+        int[] timeToAdd = {60, 120, 240, 480, 960}; 
+        for(int i=0;i<trains.size();i++){
+            for(int j=0;j<timeToAdd.length;j++){
+                action2Event.put(i+j+1, new DiscreteEvent(i+j+1, "train"+i, EventType.action, timeToAdd[j]));
+            }
+        }
+        
         initialize();
     }
     
@@ -54,7 +65,6 @@ public class RailwayBehavior implements Behavior {
         }
         trainsArrivalCount = 0;
         finalEvent = false;
-        nextNotifTime = 0D;
         clock = 0D;
     }
 
@@ -75,7 +85,12 @@ public class RailwayBehavior implements Behavior {
                 trainsArrivalCount += 1;
         }   
         if(e instanceof DiscreteEvent){
-            action = (DiscreteEvent) e;           
+            action = (DiscreteEvent) e;
+            if(action.getValue() == 0){
+                action = null;
+            }else{
+                action = action2Event.get(action.getValue());
+            }
         }
         if(e instanceof FinalEvent){
             finalEvent = true;         
@@ -144,11 +159,9 @@ public class RailwayBehavior implements Behavior {
     public ExogenousEventActivation activeEvents() {          
         if(action != null){
             Map<String,Map<String, Float>> content = new HashMap<>();
-            for(int i=0;i<lastTrainEvents.size();i++){
-                Map<String, Float> c = new HashMap<>();
-                c.put("update", Float.valueOf(action.getValue()));                
-                content.put(lastTrainEvents.get(i).getName(), c);
-            }    
+            Map<String, Float> c = new HashMap<>();
+            c.put("update", Float.valueOf(action.getValue()));                
+            content.put(action.getName(), c);            
             ExogenousEventActivation eea = new ExogenousEventActivation(content);        
             return eea;
         }         
@@ -156,42 +169,16 @@ public class RailwayBehavior implements Behavior {
     }
 
     @Override
-    public List<Event> getAllActios() {
+    public List<Event> getAllActions() {
         return null;
     }
 
     @Override
-    public boolean notifyAgent() {
-        if(action != null){ //the last event was an action
-            action = null;
-            return false;
-        }
+    public double getSigma() {
+        return notifInterval;
+    }
 
-        if(clock==0D){
-            nextNotifTime = clock + notifInterval;
-            return true;
-        }
-
-
-        if(finalEvent){ //the last event generates the reward
-            nextNotifTime = clock + notifInterval;
-            return true;
-        }
-
-//        //if some of the last events was a train arrival
-//        for(TrainEvent te : lastTrainEvents.values()){
-//            if(te.isArrival()) {
-//                te.setArribal(false); // to avoid computing reward twise
-//                nextNotifTime = clock + notifInterval;
-//                return true;
-//            }
-//        }
-
-        if(clock >= nextNotifTime) {
-            nextNotifTime = clock + notifInterval;
-            return true;
-        }
-
-        return false; //do not notify the agent
+    private DiscreteEvent discreteActionToEvent(int value) {
+        return action2Event.get(value);
     }
 }

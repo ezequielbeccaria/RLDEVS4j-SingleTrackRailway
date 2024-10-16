@@ -142,20 +142,20 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public message out() {
         message m = new message();    
-        if(phaseIs("initial") || sigma > 0){
-            content con = makeContent(
-            "out", 
-            new TrainEvent(
-                    id, 
-                    phase, 
-                    position,
-                    timeTable.getDelay(),
-                    phaseIs("active")?direction*speed:0D, 
-                    timeTable.getCurrentEntryId(), 
-                    arribal())       
-            );              
-            m.add(con);                     
-        }
+//        if(phaseIs("initial") || sigma > 0){
+        content con = makeContent(
+        "out", 
+        new TrainEvent(
+                id, 
+                phase, 
+                position,
+                timeTable.getDelay(),
+                phaseIs("active")?direction*speed:0D, 
+                timeTable.getCurrentEntryId(), 
+                arribal())       
+        );              
+        m.add(con);                     
+//        }
         return m;
     }    
 
