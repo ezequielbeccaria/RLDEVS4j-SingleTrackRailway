@@ -7,10 +7,8 @@ import rldevs4j.base.env.msg.EventType;
 import rldevs4j.base.env.msg.Step;
 import rldevs4j.singletrackrailway2.entity.BlockSectionTreeMap;
 import rldevs4j.singletrackrailway2.entity.FinalEvent;
-import rldevs4j.singletrackrailway2.entity.TimeTable;
 import rldevs4j.singletrackrailway2.entity.Train;
 
-import java.util.ArrayList;
 import java.util.List;
 import rldevs4j.base.env.spaces.Space;
 import rldevs4j.singletrackrailway2.entity.RandomDelayGenerator;
@@ -30,7 +28,7 @@ public class SimpleThreeStopsRailwayEnv extends Environment{
         super(name);
         RailwayBehavior rb = new RailwayBehavior(sections, trains, test);
         so = new StateObserver(rb, debug);
-        episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime});
+        episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime-10});
         this.trains = trains;
         this.randomDelay = randomDelay;
 

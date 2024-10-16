@@ -1,6 +1,5 @@
 package rldevs4j.singletrackrailway2;
 
-import com.google.common.collect.HashBiMap;
 import rldevs4j.base.env.gsmdp.Behavior;
 import rldevs4j.base.env.gsmdp.evgen.ExogenousEventActivation;
 import rldevs4j.base.env.msg.DiscreteEvent;
