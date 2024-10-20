@@ -22,6 +22,7 @@ public class RailwayBehavior implements Behavior {
     private DiscreteEvent action;
     private Double clock;
     private double notifInterval = 1D;
+    private boolean notifEvent = false;
     //every time an arrival happens, the value for the arrival delay is updated
     private int trainsArrivalCount;
     private boolean finalEvent;
@@ -64,6 +65,7 @@ public class RailwayBehavior implements Behavior {
         }
         trainsArrivalCount = 0;
         finalEvent = false;
+        notifEvent = false;
         clock = 0D;
     }
 
@@ -82,6 +84,7 @@ public class RailwayBehavior implements Behavior {
             lastTrainEvents.put(tEvent.getId(), tEvent);       
             if(tEvent.isArrival())
                 trainsArrivalCount += 1;
+                notifEvent = true;
         }   
         if(e instanceof DiscreteEvent){
             action = (DiscreteEvent) e;
@@ -126,6 +129,14 @@ public class RailwayBehavior implements Behavior {
         obs.put("time", time);
         
         return obs;
+    }
+    
+     @Override
+    public Map<String, Object> info() {
+        Map<String, Object> output = new HashMap<>();
+        output.put("event_occurred", this.notifEvent);
+        this.notifEvent = false;
+        return output;
     }
 
     @Override
