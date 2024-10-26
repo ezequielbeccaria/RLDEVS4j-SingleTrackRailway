@@ -41,7 +41,7 @@ public class Train extends ExogenousEventGenerator {
     public Train(Integer id, String name, Double maxSpeed, TimeTable timeTable, BlockSectionTreeMap sections, boolean randomDelay) {
         super(name, null, "passive", DevsInterface.INFINITY);     
         this.id = id;
-        this.speed = Math.floor(maxSpeed/3.6D); //To meters/s
+        this.speed = maxSpeed/3.6D; //To meters/s
         this.direction = 1D;     
         this.initialTimeTable = timeTable.deepCopy();        
         this.sections = sections;
@@ -142,7 +142,6 @@ public class Train extends ExogenousEventGenerator {
     @Override
     public message out() {
         message m = new message();    
-//        if(phaseIs("initial") || sigma > 0){
         content con = makeContent(
         "out", 
         new TrainEvent(
@@ -150,12 +149,11 @@ public class Train extends ExogenousEventGenerator {
                 phase, 
                 position,
                 timeTable.getDelay(),
-                phaseIs("active")?direction*speed:0D, 
+                !phaseIs("passive")?direction*speed:0D, 
                 timeTable.getCurrentEntryId(), 
                 arribal())       
         );              
         m.add(con);                     
-//        }
         return m;
     }    
 
