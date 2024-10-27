@@ -93,7 +93,7 @@ public class Train extends ExogenousEventGenerator {
         } else if (phaseIs("active") || phaseIs("waiting")){  
             intActive();
         } else if(phaseIs("final")){
-            holdIn("final", INFINITY);
+            holdIn("final", activeSigma);
         }
     }
     
@@ -112,7 +112,7 @@ public class Train extends ExogenousEventGenerator {
             timeTable.nextEntry();
             double nextSigma = getNextDepartureTime();
             if(nextSigma == INFINITY)
-                holdIn("final", 0D);
+                holdIn("final", activeSigma);
             else
                 holdIn("passive", nextSigma);            
         }else{
@@ -148,8 +148,8 @@ public class Train extends ExogenousEventGenerator {
                 id, 
                 phase, 
                 position,
-                timeTable.getDelay(),
-                !phaseIs("passive")?direction*speed:0D, 
+                phaseIs("active")?direction*speed*3.6D:0D, //to km/h
+                timeTable.getDelay(),                
                 timeTable.getCurrentEntryId(), 
                 arribal())       
         );              

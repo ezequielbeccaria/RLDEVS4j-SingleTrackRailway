@@ -28,7 +28,7 @@ public class SimpleThreeStopsRailwayEnv extends Environment{
         super(name);
         RailwayBehavior rb = new RailwayBehavior(sections, trains, test);
         so = new StateObserver(rb, debug);
-        episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime-10});
+        episodeFinishEventGen = new FixedTimeExogenousEventGen("episode_finish", new FinalEvent(999, "final_event", EventType.exogenous), new Double[]{simulationTime-1});
         this.trains = trains;
         this.randomDelay = randomDelay;
 
