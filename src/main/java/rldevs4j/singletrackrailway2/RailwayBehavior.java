@@ -35,10 +35,12 @@ public class RailwayBehavior implements Behavior {
         this.test = test;
         
         action2Event = new HashMap<>();
-        int[] timeToAdd = {60, 120, 240, 480, 960}; 
+        int[] timeToAdd = {60, 120, 240, 480, 960};
+        int init_key = 1;
         for(int i=0;i<trains.size();i++){
             for(int j=0;j<timeToAdd.length;j++){
-                action2Event.put(i+j+1, new DiscreteEvent(i+j+1, "train"+i, EventType.action, timeToAdd[j]));
+                action2Event.put(init_key, new DiscreteEvent(i+j+1, "train"+i, EventType.action, timeToAdd[j]));
+                init_key++;
             }
         }
         
